@@ -1,0 +1,50 @@
+plugins {
+    id "com.gradleup.shadow" version "8.3.1"
+    id 'java'
+}
+
+group = 'dev.mydogsed'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation('org.junit.jupiter:junit-jupiter')
+
+    implementation("net.dv8tion:JDA:5.0.0-beta.24")
+    implementation("ch.qos.logback:logback-classic:1.5.6")
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "dev.mydogsed.daniilexicalanalyzer.Main"
+    }
+}
+
+// Set the file name
+// Copy the file to the execution directory
+shadowJar {
+    archiveFileName.set('danii-lexical-analyzer.jar')
+    finalizedBy("copyJar")
+}
+
+// Copy the .JAR file from the libs directory to the execution directory (Creating it if not present)
+tasks.register('copyJar', Copy) {
+    from "build/libs/danii-lexical-analyzer.jar"
+    into "execution"
+}
+
+// Task that builds and then runs the bot jar file
+tasks.register("buildAndRunJar", JavaExec){
+    dependsOn 'shadowJar'
+    dependsOn 'copyJar'
+    workingDir = file("execution")
+    classpath = files("execution/danii-lexical-analyzer.jar")
+}
