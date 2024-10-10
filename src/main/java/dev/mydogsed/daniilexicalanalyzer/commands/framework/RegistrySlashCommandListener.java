@@ -1,4 +1,4 @@
-package dev.mydogsed.daniilexicalanalyzer.commands;
+package dev.mydogsed.daniilexicalanalyzer.commands.framework;
 
 import dev.mydogsed.daniilexicalanalyzer.Main;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;

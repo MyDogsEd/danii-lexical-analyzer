@@ -1,6 +1,6 @@
 package dev.mydogsed.daniilexicalanalyzer;
 
-import dev.mydogsed.daniilexicalanalyzer.commands.RegistrySlashCommandListener;
+import dev.mydogsed.daniilexicalanalyzer.commands.framework.RegistrySlashCommandListener;
 import dev.mydogsed.daniilexicalanalyzer.commands.framework.CommandRegistry;
 import dev.mydogsed.daniilexicalanalyzer.commands.framework.SimpleSlashCommand;
 import net.dv8tion.jda.api.JDA;
@@ -67,16 +67,13 @@ public class Main extends ListenerAdapter {
         // Temporarly register commands locally to the testing guild, not globally
         //Main.jda.updateCommands()
         // Hardcoded id for fruity factory
-        Main.jda.getGuildById("1233092684198182943").updateCommands()
+        // MyDogsBot guild: 734502410952769607
+        // Fruity Factory: 1233092684198182943
+        Main.jda.getGuildById("734502410952769607").updateCommands()
                 .addCommands(
-                        Commands.slash("hello", "Says hello!")
-                                .setGuildOnly(true),
-                        Commands.slash("profile", "Shows the current profile.")
-                                .setGuildOnly(true),
-                        Commands.slash("start", "Start a new rpg profile with the bot!")
+                        Commands.slash("number", "Counts the number of keyboard smashes (messages)")
                                 .setGuildOnly(true)
                 ).queue();
-
         logger.info("Registered Slash Commands");
     }
 
