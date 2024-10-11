@@ -1,5 +1,6 @@
 package dev.mydogsed.daniilexicalanalyzer;
 
+import dev.mydogsed.daniilexicalanalyzer.commands.LexicalCommands;
 import dev.mydogsed.daniilexicalanalyzer.commands.framework.RegistrySlashCommandListener;
 import dev.mydogsed.daniilexicalanalyzer.commands.framework.CommandRegistry;
 import dev.mydogsed.daniilexicalanalyzer.commands.framework.SimpleSlashCommand;
@@ -80,6 +81,9 @@ public class Main extends ListenerAdapter {
     // Register the command Executors so the commands actually do something lmao
     public static void registerCommandExecutors(){
         commandRegistry.register("hello", new SimpleSlashCommand("Hello!"));
+        commandRegistry.register("invite", new SimpleSlashCommand("Invite the bot here: " +
+                "https://discord.com/oauth2/authorize?client_id=1294039897316917278&permissions=8&scope=bot"));
+        commandRegistry.registerMethods(LexicalCommands.class);
         logger.info("Registered Command Executors");
     }
 

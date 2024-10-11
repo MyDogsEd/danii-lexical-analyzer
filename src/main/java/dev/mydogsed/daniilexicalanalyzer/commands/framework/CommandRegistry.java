@@ -38,6 +38,7 @@ public class CommandRegistry {
     Register multiple commands from a single class as command executors using an annotation shorthand
     This is so that less complex commands can be registered with just a method and not need an entire dedicated class
      */
+    @SuppressWarnings("Convert2Lambda") // So Intellij will stop yelling at me :(
     public void registerMethods(Class<?> clazz){
         for (Method method : clazz.getDeclaredMethods()) {
             if (!method.isAnnotationPresent(SlashCommandMethod.class)) {
@@ -54,11 +55,9 @@ public class CommandRegistry {
                     catch (IllegalAccessException | InvocationTargetException e) {
                         LoggerFactory.getLogger(CommandRegistry.class).warn(e.getMessage());
                     }
-
                 }
             });
         }
-
     }
 
     // Return the Executor method for the searched command

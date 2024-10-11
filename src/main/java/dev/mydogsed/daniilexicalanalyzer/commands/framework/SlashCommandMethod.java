@@ -7,6 +7,9 @@ import java.lang.annotation.Target;
 
 /*
 Represents a slash command contained in a single method.
+How to define a method slash command:
+    - Define a public static method that has as a parameter a `SlashCommandInteractionEvent`
+
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
