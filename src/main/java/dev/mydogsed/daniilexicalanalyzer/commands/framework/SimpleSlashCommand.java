@@ -8,13 +8,20 @@ Represents a simple call-and-response command, where the same message is used fo
 public class SimpleSlashCommand implements SlashCommand {
 
     private final String response;
+    private final String description;
 
-    public SimpleSlashCommand(String response){
+    public SimpleSlashCommand(String response, String description){
         this.response = response;
+        this.description = description;
     }
 
     @Override
     public void onCommand(SlashCommandInteractionEvent event) {
         event.reply(response).setEphemeral(true).queue();
+    }
+
+    @Override
+    public String getDescription() {
+        return this.description;
     }
 }

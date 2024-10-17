@@ -9,4 +9,6 @@ public interface SlashCommand {
      */
     void onCommand(SlashCommandInteractionEvent event);
 
+    String getDescription();
+
 }
