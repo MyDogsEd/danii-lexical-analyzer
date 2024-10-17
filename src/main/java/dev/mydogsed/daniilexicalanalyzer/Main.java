@@ -1,5 +1,6 @@
 package dev.mydogsed.daniilexicalanalyzer;
 
+import dev.mydogsed.daniilexicalanalyzer.commands.LetterCountCommand;
 import dev.mydogsed.daniilexicalanalyzer.commands.LexicalCommands;
 import dev.mydogsed.daniilexicalanalyzer.commands.MiscCommands;
 import dev.mydogsed.daniilexicalanalyzer.commands.framework.RegistrySlashCommandListener;
@@ -78,6 +79,8 @@ public class Main extends ListenerAdapter {
                         Commands.slash("number", "Counts the number of keyboard smashes (messages)")
                                 .setGuildOnly(true),
                         Commands.slash("historyfile", "Uploads a text file containing the channel's history")
+                                .setGuildOnly(true),
+                        Commands.slash("lettercount", "Gets the percentage of the top 10 most used letters")
                                 .setGuildOnly(true)
                 ).queue();
         Main.jda.getGuildById("1233092684198182943").updateCommands() // fruity factory
@@ -85,6 +88,8 @@ public class Main extends ListenerAdapter {
                         Commands.slash("number", "Counts the number of keyboard smashes (messages)")
                                 .setGuildOnly(true),
                         Commands.slash("historyfile", "Uploads a text file containing the channel's history")
+                                .setGuildOnly(true),
+                        Commands.slash("lettercount", "Gets the percentage of the top 10 most used letters")
                                 .setGuildOnly(true)
                 ).queue();
         logger.info("Registered Slash Commands");
@@ -95,8 +100,9 @@ public class Main extends ListenerAdapter {
         commandRegistry.register("hello", new SimpleSlashCommand("Hello!"));
         commandRegistry.register("invite", new SimpleSlashCommand("Invite the bot here: " +
                 "https://discord.com/oauth2/authorize?client_id=1294039897316917278&permissions=8&scope=bot"));
-        commandRegistry.registerMethods(LexicalCommands.class);
+        //commandRegistry.registerMethods(LexicalCommands.class);
         commandRegistry.registerMethods(MiscCommands.class);
+        commandRegistry.register("lettercount", new LetterCountCommand());
         logger.info("Registered Command Executors");
     }
 
