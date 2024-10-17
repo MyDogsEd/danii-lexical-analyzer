@@ -1,7 +1,6 @@
 package dev.mydogsed.daniilexicalanalyzer;
 
-import dev.mydogsed.daniilexicalanalyzer.commands.LetterCountCommand;
-
+import dev.mydogsed.daniilexicalanalyzer.commands.LexicalCommands;
 import dev.mydogsed.daniilexicalanalyzer.commands.MiscCommands;
 import dev.mydogsed.daniilexicalanalyzer.commands.framework.RegistrySlashCommandListener;
 import dev.mydogsed.daniilexicalanalyzer.commands.framework.CommandRegistry;
@@ -115,11 +114,10 @@ public class Main extends ListenerAdapter {
                 "Prints the invite link for the bot to the chanel!"));
 
         // Register classes that use the @SlashCommand decorators
-        //commandRegistry.registerMethods(LexicalCommands.class);
+        commandRegistry.registerMethods(LexicalCommands.class);
         commandRegistry.registerMethods(MiscCommands.class);
 
         // Register Classes that implement SlashCommand
-        commandRegistry.register("lettercount", new LetterCountCommand());
 
         // Log that command executors have been registered
         logger.info("Registered Command Executors");
