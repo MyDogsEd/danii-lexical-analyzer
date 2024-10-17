@@ -97,12 +97,22 @@ public class Main extends ListenerAdapter {
 
     // Register the command Executors so the commands actually do something lmao
     public static void registerCommandExecutors(){
-        commandRegistry.register("hello", new SimpleSlashCommand("Hello!"));
+
+        // Register simple slash commands
+        commandRegistry.register("hello", new SimpleSlashCommand("Hello!",
+                "Sends a hello message!"));
         commandRegistry.register("invite", new SimpleSlashCommand("Invite the bot here: " +
-                "https://discord.com/oauth2/authorize?client_id=1294039897316917278&permissions=8&scope=bot"));
+                "https://discord.com/oauth2/authorize?client_id=1294039897316917278&permissions=8&scope=bot",
+                "Prints the invite link for the bot to the chanel!"));
+
+        // Register classes that use the @SlashCommand decorators
         //commandRegistry.registerMethods(LexicalCommands.class);
         commandRegistry.registerMethods(MiscCommands.class);
+
+        // Register Classes that implement SlashCommand
         commandRegistry.register("lettercount", new LetterCountCommand());
+
+        // Log that command executors have been registered
         logger.info("Registered Command Executors");
     }
 

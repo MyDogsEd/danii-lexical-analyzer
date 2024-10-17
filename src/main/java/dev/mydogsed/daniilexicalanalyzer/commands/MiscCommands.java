@@ -1,6 +1,6 @@
 package dev.mydogsed.daniilexicalanalyzer.commands;
 
-import dev.mydogsed.daniilexicalanalyzer.commands.framework.SlashCommandMethod;
+import dev.mydogsed.daniilexicalanalyzer.commands.framework.SlashCommandExecutor;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -30,7 +30,7 @@ public class MiscCommands {
     }
 
     // Counts the number of messages in a channel
-    @SlashCommandMethod("number")
+    @SlashCommandExecutor("number")
     public static void numberCommand(SlashCommandInteractionEvent event) {
         InteractionHook hook = event.getHook();
         event.deferReply().queue();
@@ -40,7 +40,7 @@ public class MiscCommands {
     }
 
     // Uploads a file of the message history in that channel
-    @SlashCommandMethod("historyfile")
+    @SlashCommandExecutor("historyfile")
     public static void historyFileCommand(SlashCommandInteractionEvent event) {
         InteractionHook hook = event.getHook();
         event.deferReply().setEphemeral(true).queue();

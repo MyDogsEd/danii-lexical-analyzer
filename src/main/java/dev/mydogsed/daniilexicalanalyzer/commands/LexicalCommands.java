@@ -1,10 +1,9 @@
 package dev.mydogsed.daniilexicalanalyzer.commands;
 
 import dev.mydogsed.daniilexicalanalyzer.Main;
-import dev.mydogsed.daniilexicalanalyzer.commands.framework.SlashCommandMethod;
+import dev.mydogsed.daniilexicalanalyzer.commands.framework.SlashCommandExecutor;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 
@@ -14,7 +13,7 @@ import static dev.mydogsed.daniilexicalanalyzer.commands.MiscCommands.getMessage
 
 public class LexicalCommands {
 
-    @SlashCommandMethod("lettercount")
+    @SlashCommandExecutor("lettercount")
     public static void letterCountCommand(SlashCommandInteractionEvent event) {
         InteractionHook hook = event.getHook();
         event.deferReply().queue();
