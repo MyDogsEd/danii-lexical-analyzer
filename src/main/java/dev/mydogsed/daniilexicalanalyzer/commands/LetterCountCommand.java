@@ -24,13 +24,13 @@ public class LetterCountCommand implements SlashCommand {
 
         // Get the messages in the channel and write all of them into one string
         List<Message> messages = getMessages(event.getChannel().asTextChannel());
-        String letters = "";
+        StringBuilder letters = new StringBuilder();
         for( Message message : messages ) {
-            letters += message.getContentDisplay();
+            letters.append(message.getContentDisplay());
         }
 
         // Get a character array from the string and sort it
-        char[] arr = letters.toCharArray();
+        char[] arr = letters.toString().toCharArray();
         Arrays.sort(arr);
         Map<Character, Double> map = new HashMap<>();
 
@@ -57,5 +57,10 @@ public class LetterCountCommand implements SlashCommand {
         }
 
         hook.editOriginalEmbeds(eb.build()).queue();
+    }
+
+    @Override
+    public String getDescription() {
+        return "Returns the percent of each letter in all of danii's keyboard smashes";
     }
 }

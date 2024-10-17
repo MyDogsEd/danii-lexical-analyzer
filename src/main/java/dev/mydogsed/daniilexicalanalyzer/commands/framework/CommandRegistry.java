@@ -46,8 +46,13 @@ public class CommandRegistry {
             }
             SlashCommandExecutor methodAnnotation = method.getAnnotation(SlashCommandExecutor.class);
             String name = methodAnnotation.value();
-            SlashCommandDescription descriptionAnnotation = method.getAnnotation(SlashCommandDescription.class);
-            String description = descriptionAnnotation.value();
+
+            String description = "A danii-lexical-analyzer command";
+            if (method.isAnnotationPresent(SlashCommandDescription.class)) {
+                SlashCommandDescription descriptionAnnotation = method.getAnnotation(SlashCommandDescription.class);
+                description = descriptionAnnotation.value();
+            }
+            String finalDescription = description; // Effectivly final variable
             register(name, new SlashCommand() {
                 @Override
                 public void onCommand(SlashCommandInteractionEvent event) {
@@ -61,7 +66,7 @@ public class CommandRegistry {
 
                 @Override
                 public String getDescription() {
-                    return description;
+                    return finalDescription;
                 }
             });
         }

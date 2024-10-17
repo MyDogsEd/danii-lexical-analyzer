@@ -1,18 +1,20 @@
 package dev.mydogsed.daniilexicalanalyzer;
 
 import dev.mydogsed.daniilexicalanalyzer.commands.LetterCountCommand;
-import dev.mydogsed.daniilexicalanalyzer.commands.LexicalCommands;
+
 import dev.mydogsed.daniilexicalanalyzer.commands.MiscCommands;
 import dev.mydogsed.daniilexicalanalyzer.commands.framework.RegistrySlashCommandListener;
 import dev.mydogsed.daniilexicalanalyzer.commands.framework.CommandRegistry;
 import dev.mydogsed.daniilexicalanalyzer.commands.framework.SimpleSlashCommand;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.exceptions.InvalidTokenException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +22,9 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.Scanner;
+import java.util.Set;
 
 public class Main extends ListenerAdapter {
 
@@ -60,8 +64,8 @@ public class Main extends ListenerAdapter {
     @Override
     public void onReady(@NotNull ReadyEvent event) {
         // TODO: move this to a command or something, this really should only be done once, not every time the bot logs in
-        registerSlashCommands();
         registerCommandExecutors();
+        registerSlashCommands();
         registerListeners();
 
         logger.info("Main is ready!");
@@ -69,30 +73,35 @@ public class Main extends ListenerAdapter {
 
     // Register the slash commands to discord
     public static void registerSlashCommands(){
-        // Temporarly register commands locally to the testing guild, not globally
         //Main.jda.updateCommands()
-        // Hardcoded id for fruity factory
+        // Hardcoded id for fruity factory and testing guild
         // MyDogsBot guild: 734502410952769607
         // Fruity Factory: 1233092684198182943
-        Main.jda.getGuildById("734502410952769607").updateCommands() // Update mydogsbot guild
-                .addCommands(
-                        Commands.slash("number", "Counts the number of keyboard smashes (messages)")
-                                .setGuildOnly(true),
-                        Commands.slash("historyfile", "Uploads a text file containing the channel's history")
-                                .setGuildOnly(true),
-                        Commands.slash("lettercount", "Gets the percentage of the top 10 most used letters")
-                                .setGuildOnly(true)
-                ).queue();
-        Main.jda.getGuildById("1233092684198182943").updateCommands() // fruity factory
-                .addCommands(
-                        Commands.slash("number", "Counts the number of keyboard smashes (messages)")
-                                .setGuildOnly(true),
-                        Commands.slash("historyfile", "Uploads a text file containing the channel's history")
-                                .setGuildOnly(true),
-                        Commands.slash("lettercount", "Gets the percentage of the top 10 most used letters")
-                                .setGuildOnly(true)
-                ).queue();
+
+        // Register slash commands for the two guilds:
+        try {
+            registerCommandsForGuild(Objects.requireNonNull(jda.getGuildById("734502410952769607")));
+            registerCommandsForGuild(Objects.requireNonNull(jda.getGuildById("1233092684198182943")));
+        } catch (NullPointerException e) {
+            logger.error("Guilds not found for registering slash commands!");
+        }
         logger.info("Registered Slash Commands");
+
+
+    }
+
+    // For the given guild, register all commands in the command registry as slash commands for that guild
+    private static void registerCommandsForGuild(Guild guild){
+        CommandRegistry registry = CommandRegistry.getInstance();
+        Set<String> commandNames = registry.getCommandNames();
+        CommandListUpdateAction updateAction = guild.updateCommands();
+        for(String commandName : commandNames){
+            updateAction = updateAction.addCommands(
+                    Commands.slash(commandName, registry.getExecutor(commandName).getDescription())
+                            .setGuildOnly(true)
+            );
+        }
+        updateAction.queue();
     }
 
     // Register the command Executors so the commands actually do something lmao
