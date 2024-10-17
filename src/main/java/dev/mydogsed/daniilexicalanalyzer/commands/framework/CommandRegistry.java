@@ -60,7 +60,7 @@ public class CommandRegistry {
                         method.invoke(null, event);
                     }
                     catch (IllegalAccessException | InvocationTargetException e) {
-                        LoggerFactory.getLogger(CommandRegistry.class).warn(e.getMessage());
+                        e.printStackTrace();
                     }
                 }
 
