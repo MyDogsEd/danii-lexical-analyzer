@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class CommandRegistry {
 
@@ -74,6 +75,10 @@ public class CommandRegistry {
     // See whether an executor is stored for a given command or not
     public boolean containsExecutor(String name) {
         return map.containsKey(name);
+    }
+
+    public Set<String> getCommandNames(){
+        return map.keySet();
     }
 
 }
