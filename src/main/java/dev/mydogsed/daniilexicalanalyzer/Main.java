@@ -1,6 +1,7 @@
 package dev.mydogsed.daniilexicalanalyzer;
 
 import dev.mydogsed.daniilexicalanalyzer.commands.LexicalCommands;
+import dev.mydogsed.daniilexicalanalyzer.commands.MiscCommands;
 import dev.mydogsed.daniilexicalanalyzer.commands.framework.RegistrySlashCommandListener;
 import dev.mydogsed.daniilexicalanalyzer.commands.framework.CommandRegistry;
 import dev.mydogsed.daniilexicalanalyzer.commands.framework.SimpleSlashCommand;
@@ -10,6 +11,7 @@ import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.exceptions.InvalidTokenException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +34,7 @@ public class Main extends ListenerAdapter {
         try {
             jda = JDABuilder.createDefault(getApiKey())
                     .addEventListeners(new Main())
+                    .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                     .build();
         } catch (FileNotFoundException e) {
             logger.error("API Key file not found.");
@@ -70,9 +73,18 @@ public class Main extends ListenerAdapter {
         // Hardcoded id for fruity factory
         // MyDogsBot guild: 734502410952769607
         // Fruity Factory: 1233092684198182943
-        Main.jda.getGuildById("734502410952769607").updateCommands()
+        Main.jda.getGuildById("734502410952769607").updateCommands() // Update mydogsbot guild
                 .addCommands(
                         Commands.slash("number", "Counts the number of keyboard smashes (messages)")
+                                .setGuildOnly(true),
+                        Commands.slash("historyfile", "Uploads a text file containing the channel's history")
+                                .setGuildOnly(true)
+                ).queue();
+        Main.jda.getGuildById("1233092684198182943").updateCommands() // fruity factory
+                .addCommands(
+                        Commands.slash("number", "Counts the number of keyboard smashes (messages)")
+                                .setGuildOnly(true),
+                        Commands.slash("historyfile", "Uploads a text file containing the channel's history")
                                 .setGuildOnly(true)
                 ).queue();
         logger.info("Registered Slash Commands");
@@ -84,6 +96,7 @@ public class Main extends ListenerAdapter {
         commandRegistry.register("invite", new SimpleSlashCommand("Invite the bot here: " +
                 "https://discord.com/oauth2/authorize?client_id=1294039897316917278&permissions=8&scope=bot"));
         commandRegistry.registerMethods(LexicalCommands.class);
+        commandRegistry.registerMethods(MiscCommands.class);
         logger.info("Registered Command Executors");
     }
 
