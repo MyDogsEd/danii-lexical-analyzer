@@ -24,24 +24,26 @@ public class LexicalCommands {
         List<Message> messages = getMessages(event.getChannel().asTextChannel());
         StringBuilder letters = new StringBuilder();
         for( Message message : messages ) {
-            letters.append(message.getContentDisplay());
+            letters.append(message.getContentDisplay().toLowerCase());
         }
 
         // Get a character array from the string and sort it
         char[] arr = letters.toString().toCharArray();
         Arrays.sort(arr);
-        Map<Character, Double> map = new HashMap<>();
+        Map<Character, Integer> map = new HashMap<>();
 
         // Count occurrences of each letter in the sorted array
-        for(int i = 0; i < arr.length; i++) {
+        int i = 0;
+        while (i < arr.length) {
             char letter = arr[i];
             int j = i + 1;
-            int letterCount = 0;
+            int letterCount = 1;
             while (j < arr.length && arr[j] == letter) {
                 letterCount++;
                 j++;
             }
-            map.put(letter, ((double)letterCount));
+            i = j;
+            map.put(letter, (int)((((double)letterCount)/100.0) * 100));
         }
         Character[] keys = map.keySet().toArray(new Character[0]);
         Arrays.sort(keys);
@@ -50,12 +52,10 @@ public class LexicalCommands {
         EmbedBuilder eb = new EmbedBuilder()
                 .setAuthor("danii-lexical-analyzer", "https://mydogsed.dev", Main.jda.getSelfUser().getAvatarUrl())
                 .setTitle("Letter Percentages");
-        for(int i = 0; i < 10 && i < keys.length; i++) {
-            eb.addField(String.valueOf(keys[i]), String.valueOf(map.get(keys[i])), false);
+        for(int k = 0; k < 10 && k < keys.length; k++) {
+            eb.addField(String.valueOf(keys[k]), String.valueOf(map.get(keys[k])), false);
         }
 
         hook.editOriginalEmbeds(eb.build()).queue();
-
-        hook.editOriginal("THIS IS SOME SHT").queue();
     }
 }
