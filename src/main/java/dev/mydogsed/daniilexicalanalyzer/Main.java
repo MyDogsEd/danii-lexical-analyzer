@@ -67,7 +67,7 @@ public class Main extends ListenerAdapter {
         registerSlashCommands();
         registerListeners();
 
-        logger.info("Main is ready!");
+        logger.info("danii-lexical-analyzer is ready!");
     }
 
     // Register the slash commands to discord
