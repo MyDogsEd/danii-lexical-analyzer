@@ -28,7 +28,7 @@ public class LexicalCommands {
         }
 
         // Get a character array from the string and sort it
-        char[] arr = letters.toString().toCharArray();
+        char[] arr = letters.toString().replaceAll("\\s","").toCharArray();
         Arrays.sort(arr);
         Map<Character, Integer> map = new HashMap<>();
 
@@ -43,19 +43,25 @@ public class LexicalCommands {
                 j++;
             }
             i = j;
-            map.put(letter, (int)((((double)letterCount)/100.0) * 100));
+
+            if (!(letter == ' ')){
+                map.put(letter, (int)((((double)letterCount) / arr.length) * 100));
+            }
         }
-        Character[] keys = map.keySet().toArray(new Character[0]);
-        Arrays.sort(keys);
 
+        // Convert the keys in the hashmap to a list
+        List<Character> keys = new ArrayList<>(map.keySet().stream().toList());
 
+        // Sort that list based on the key's value in the map
+        keys.sort(Comparator.comparing(map::get));
+
+        // Build an embed with that information
         EmbedBuilder eb = new EmbedBuilder()
                 .setAuthor("danii-lexical-analyzer", "https://mydogsed.dev", Main.jda.getSelfUser().getAvatarUrl())
                 .setTitle("Letter Percentages");
-        for(int k = 0; k < 10 && k < keys.length; k++) {
-            eb.addField(String.valueOf(keys[k]), String.valueOf(map.get(keys[k])), false);
+        for(int k = keys.size() - 1; k > keys.size() - 10; k--) {
+            eb.addField(String.valueOf(keys.get(k)), String.valueOf(map.get(keys.get(k))), false);
         }
-
         hook.editOriginalEmbeds(eb.build()).queue();
     }
 }
