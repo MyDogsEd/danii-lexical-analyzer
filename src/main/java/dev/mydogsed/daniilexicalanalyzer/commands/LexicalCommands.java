@@ -22,7 +22,7 @@ public class LexicalCommands {
         InteractionHook hook = event.getHook();
         event.deferReply().queue();
 
-        char[] chars = getCharactersInMessages(event.getChannel().asTextChannel());
+        char[] chars = getCharactersInMessages(getSmashes(event.getChannel().asTextChannel()));
         Map<Character, Integer> map = getCharacterOccurencesMap(chars);
 
         // Convert the keys in the hashmap to a list
@@ -34,16 +34,39 @@ public class LexicalCommands {
         // Build an embed with that information
         EmbedBuilder eb = new EmbedBuilder()
                 .setAuthor("danii-lexical-analyzer", "https://mydogsed.dev", Main.jda.getSelfUser().getAvatarUrl())
-                .setTitle("Letter Percentages");
+                .setTitle("Letter Percentages")
+                .setTimestamp(new Date().toInstant());
         for(int k = keys.size() - 1; k > keys.size() - 10; k--) {
-            eb.addField(String.valueOf(keys.get(k)), String.valueOf(map.get(keys.get(k))), false);
+            eb.addField(String.valueOf(keys.get(k)), String.valueOf(map.get(keys.get(k))) + "%", false);
         }
         hook.editOriginalEmbeds(eb.build()).queue();
     }
 
-    private static char[] getCharactersInMessages(TextChannel channel) {
+    @SlashCommandExecutor("averagelength")
+    @SlashCommandDescription("Gets the average length of each keyboard smash")
+    public static void averageLengthCommand(SlashCommandInteractionEvent event) {
+        InteractionHook hook = event.getHook();
+        event.deferReply().queue();
+
+        List<Message> messages = getSmashes(event.getChannel().asTextChannel());
+
+        int sum = 0;
+        for(Message message : messages) {
+            sum += message.getContentRaw().length();
+        }
+        int avg = sum / messages.size();
+
+        EmbedBuilder eb = new EmbedBuilder()
+                .setAuthor("danii-lexical-analyzer", "https://mydogsed.dev", Main.jda.getSelfUser().getAvatarUrl())
+                .setTitle("Letter Percentages")
+                .setTimestamp(new Date().toInstant())
+                .setDescription("The average length of each keyboard smash is " + avg + " characters");
+        hook.editOriginalEmbeds(eb.build()).queue();
+    }
+
+    // Get all of the characters in the list of messages
+    private static char[] getCharactersInMessages(List<Message> messages) {
         // Get the messages in the channel and write all of them into one string
-        List<Message> messages = getMessages(channel);
         StringBuilder letters = new StringBuilder();
         for( Message message : messages ) {
             letters.append(message.getContentDisplay().toLowerCase());
@@ -78,5 +101,19 @@ public class LexicalCommands {
         return map;
     }
 
-
+    // Out of all the messages in a channel, return any that don't contain spaces
+    private static List<Message> getSmashes(TextChannel channel) {
+        List<Message> messages = getMessages(channel);
+        List<Message> smashes = new LinkedList<>();
+        for(Message message : messages) {
+            if(message.getContentRaw().startsWith("//")) {
+                continue;
+            }
+            if (message.getAuthor().isBot()){
+                continue;
+            }
+            smashes.add(message);
+        }
+        return smashes;
+    }
 }
