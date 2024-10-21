@@ -1,7 +1,10 @@
 package dev.mydogsed.daniilexicalanalyzer.commands;
 
+import dev.mydogsed.daniilexicalanalyzer.commands.framework.CommandRegistry;
+import dev.mydogsed.daniilexicalanalyzer.commands.framework.SlashCommand;
 import dev.mydogsed.daniilexicalanalyzer.commands.framework.SlashCommandDescription;
 import dev.mydogsed.daniilexicalanalyzer.commands.framework.SlashCommandExecutor;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -13,6 +16,9 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
+import static dev.mydogsed.daniilexicalanalyzer.commands.LexicalCommands.basicEmbed;
 
 public class MiscCommands {
 
@@ -42,6 +48,21 @@ public class MiscCommands {
         InputStream stream = new ByteArrayInputStream(messageString.toString().getBytes());
         FileUpload upload = FileUpload.fromData(stream, "channel_messages.txt");
         hook.editOriginalAttachments(upload).queue();
+    }
+
+    @SlashCommandExecutor("help")
+    @SlashCommandDescription("Show the help dialog")
+    public static void helpCommand(SlashCommandInteractionEvent event) {
+        InteractionHook hook = event.getHook();
+        event.deferReply().queue();
+
+        EmbedBuilder eb = basicEmbed("Help Commands");
+        CommandRegistry registry = CommandRegistry.getInstance();
+        Set<String> commandNames = registry.getCommandNames();
+        for(String commandName : commandNames) {
+            eb.addField("/" + commandName, registry.getExecutor(commandName).getDescription(), true);
+        }
+        hook.editOriginalEmbeds(eb.build()).queue();
     }
 
     public static List<Message> getMessages(TextChannel channel) {

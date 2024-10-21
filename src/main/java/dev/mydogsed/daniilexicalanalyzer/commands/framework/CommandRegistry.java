@@ -1,13 +1,12 @@
 package dev.mydogsed.daniilexicalanalyzer.commands.framework;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class CommandRegistry {
 
@@ -19,7 +18,7 @@ public class CommandRegistry {
 
     // Getter to return a reference to the instance
     public static CommandRegistry getInstance() {
-        if (instance == null){
+        if (instance == null) {
             instance = new CommandRegistry();
         }
         return instance;
@@ -31,7 +30,7 @@ public class CommandRegistry {
     }
 
     // Public method to register commands in the registry
-    public void register (String name, SlashCommand executor) {
+    public void register(String name, SlashCommand executor) {
         map.put(name, executor);
     }
 
@@ -39,7 +38,7 @@ public class CommandRegistry {
     Register multiple commands from a single class as command executors using an annotation shorthand
     This is so that less complex commands can be registered with just a method and not need an entire dedicated class
      */
-    public void registerMethods(Class<?> clazz){
+    public void registerMethods(Class<?> clazz) {
         for (Method method : clazz.getDeclaredMethods()) {
             if (!method.isAnnotationPresent(SlashCommandExecutor.class)) {
                 continue;
@@ -58,8 +57,7 @@ public class CommandRegistry {
                 public void onCommand(SlashCommandInteractionEvent event) {
                     try {
                         method.invoke(null, event);
-                    }
-                    catch (IllegalAccessException | InvocationTargetException e) {
+                    } catch (IllegalAccessException | InvocationTargetException e) {
                         e.printStackTrace();
                     }
                 }
@@ -82,9 +80,8 @@ public class CommandRegistry {
         return map.containsKey(name);
     }
 
-    public Set<String> getCommandNames(){
+    public Set<String> getCommandNames() {
         return map.keySet();
     }
-
 }
 

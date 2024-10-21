@@ -5,19 +5,30 @@ import dev.mydogsed.daniilexicalanalyzer.commands.framework.SlashCommandDescript
 import dev.mydogsed.daniilexicalanalyzer.commands.framework.SlashCommandExecutor;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 import static dev.mydogsed.daniilexicalanalyzer.commands.MiscCommands.getMessages;
 
 public class LexicalCommands {
 
+    public static EmbedBuilder basicEmbed(String title){
+        return new EmbedBuilder()
+                .setTitle(title)
+                .setAuthor("danii-lexical-analyzer", "https://mydogsed.dev", Main.jda.getSelfUser().getAvatarUrl())
+                .setColor(new Color(184, 56, 59))
+                .setTimestamp(new Date().toInstant());
+    }
+
     @SlashCommandExecutor("lettercount")
-    @SlashCommandDescription("Returns the percent of each letter in all of danii's keyboard smashes")
+    @SlashCommandDescription("Returns the percent of the top 10 letters in all of danii's keyboard smashes")
     public static void letterCountCommand(SlashCommandInteractionEvent event) {
         InteractionHook hook = event.getHook();
         event.deferReply().queue();
@@ -32,10 +43,7 @@ public class LexicalCommands {
         keys.sort(Comparator.comparing(map::get));
 
         // Build an embed with that information
-        EmbedBuilder eb = new EmbedBuilder()
-                .setAuthor("danii-lexical-analyzer", "https://mydogsed.dev", Main.jda.getSelfUser().getAvatarUrl())
-                .setTitle("Letter Percentages")
-                .setTimestamp(new Date().toInstant());
+        EmbedBuilder eb = basicEmbed("Letter Percentages");
         for(int k = keys.size() - 1; k > keys.size() - 10; k--) {
             eb.addField(String.valueOf(keys.get(k)), String.valueOf(map.get(keys.get(k))) + "%", false);
         }
@@ -54,17 +62,28 @@ public class LexicalCommands {
         for(Message message : messages) {
             sum += message.getContentRaw().length();
         }
-        int avg = sum / messages.size();
+        double avg = (double)sum / (double)messages.size();
 
-        EmbedBuilder eb = new EmbedBuilder()
-                .setAuthor("danii-lexical-analyzer", "https://mydogsed.dev", Main.jda.getSelfUser().getAvatarUrl())
-                .setTitle("Letter Percentages")
-                .setTimestamp(new Date().toInstant())
+        EmbedBuilder eb = basicEmbed("Average Length")
                 .setDescription("The average length of each keyboard smash is " + avg + " characters");
         hook.editOriginalEmbeds(eb.build()).queue();
     }
 
-    // Get all of the characters in the list of messages
+    @SlashCommandExecutor("longest")
+    @SlashCommandDescription("Returns the longest single keyboard smash in the channel")
+    public static void longestCommand(SlashCommandInteractionEvent event) {
+        InteractionHook hook = event.getHook();
+        event.deferReply().queue();
+        List<Message> messages = getSmashes(event.getChannel().asTextChannel());
+        messages.sort(Comparator.comparing(message -> message.getContentRaw().length()));
+        Message longestMessage = messages.get(messages.size() - 1);
+        EmbedBuilder eb = basicEmbed("Longest")
+                .setDescription("The longest single keyboard smash is " + longestMessage.getContentRaw().length() + " characters")
+                .addField(longestMessage.getContentRaw(), longestMessage.getJumpUrl(), false);
+        hook.editOriginalEmbeds(eb.build()).queue();
+    }
+
+    // Get all the characters in the list of messages
     private static char[] getCharactersInMessages(List<Message> messages) {
         // Get the messages in the channel and write all of them into one string
         StringBuilder letters = new StringBuilder();
