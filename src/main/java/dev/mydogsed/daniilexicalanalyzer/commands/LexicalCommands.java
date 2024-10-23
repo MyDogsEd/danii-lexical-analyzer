@@ -96,12 +96,24 @@ public class LexicalCommands {
 
         // Sort all of the keyboard smashes by day
         Map<DayOfWeek, List<Message>> days = new HashMap<>();
+        for (DayOfWeek day : DayOfWeek.values()) {
+            days.put(day, new LinkedList<>());
+        }
+
         for(Message message : smashes) {
-            days.put(message.getTimeCreated().getDayOfWeek(), message);
+            List<Message> list = days.get(message.getTimeCreated().getDayOfWeek());
+            list.add(message);
         }
 
         List<DayOfWeek> keys = new ArrayList<>(days.keySet().stream().toList());
-        keys.sort(Comparator.comparing(key -> days.get(key).);
+        keys.sort(Comparator.comparing(key -> days.get(key).size()).reversed());
+
+        EmbedBuilder eb = basicEmbed("Days");
+        for(DayOfWeek day : keys) {
+            eb.addField(String.valueOf(day), days.get(day).size() + " keyboard smashes", false);
+        }
+
+        hook.editOriginalEmbeds(eb.build()).queue();
     }
 
     // Get all the characters in the list of messages
