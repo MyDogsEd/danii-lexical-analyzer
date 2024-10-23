@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.interactions.InteractionHook;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.time.DayOfWeek;
 import java.util.*;
 import java.util.List;
 
@@ -81,6 +82,26 @@ public class LexicalCommands {
                 .setDescription("The longest single keyboard smash is " + longestMessage.getContentRaw().length() + " characters")
                 .addField(longestMessage.getContentRaw(), longestMessage.getJumpUrl(), false);
         hook.editOriginalEmbeds(eb.build()).queue();
+    }
+
+    @SlashCommandExecutor("days")
+    @SlashCommandDescription("What day do most keyboard smashes take place on?")
+    public static void daysCommand(SlashCommandInteractionEvent event) {
+        // Command Boilerplate
+        InteractionHook hook = event.getHook();
+        event.deferReply().queue();
+
+        // get the keyboard smashes
+        List<Message> smashes = getSmashes(event.getChannel().asTextChannel());
+
+        // Sort all of the keyboard smashes by day
+        Map<DayOfWeek, List<Message>> days = new HashMap<>();
+        for(Message message : smashes) {
+            days.put(message.getTimeCreated().getDayOfWeek(), message);
+        }
+
+        List<DayOfWeek> keys = new ArrayList<>(days.keySet().stream().toList());
+        keys.sort(Comparator.comparing(key -> days.get(key).);
     }
 
     // Get all the characters in the list of messages
