@@ -116,6 +116,8 @@ public class LexicalCommands {
         hook.editOriginalEmbeds(eb.build()).queue();
     }
 
+    // Private utility methods for the commands in this class
+
     // Get all the characters in the list of messages
     private static char[] getCharactersInMessages(List<Message> messages) {
         // Get the messages in the channel and write all of them into one string
