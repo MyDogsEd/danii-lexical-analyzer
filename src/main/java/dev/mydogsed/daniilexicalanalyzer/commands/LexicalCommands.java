@@ -9,9 +9,12 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.utils.FileUpload;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.time.DayOfWeek;
 import java.util.*;
 import java.util.List;
@@ -116,6 +119,23 @@ public class LexicalCommands {
         hook.editOriginalEmbeds(eb.build()).queue();
     }
 
+    @SlashCommandExecutor("csv")
+    @SlashCommandDescription("Upload a CSV file containing the keyboard smashes in the channel")
+    public static void csvCommand(SlashCommandInteractionEvent event) {
+        InteractionHook hook = event.getHook();
+        event.deferReply().setEphemeral(false).queue();
+        List<Message> smashes = getSmashes(event.getChannel().asTextChannel());
+
+        StringBuilder csv = new StringBuilder();
+        for(Message message : smashes) {
+            csv.append(String.format("%s, %tc%n", message.getContentRaw(), message.getTimeCreated()));
+        }
+
+        InputStream stream = new ByteArrayInputStream(csv.toString().getBytes());
+        FileUpload upload = FileUpload.fromData(stream, "keyboard_smashes.csv");
+        hook.editOriginalAttachments(upload).queue();
+
+    }
     // Private utility methods for the commands in this class
 
     // Get all the characters in the list of messages
