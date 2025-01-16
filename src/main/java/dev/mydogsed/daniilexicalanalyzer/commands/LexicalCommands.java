@@ -109,7 +109,12 @@ public class LexicalCommands {
         }
 
         List<DayOfWeek> keys = new ArrayList<>(days.keySet().stream().toList());
-        keys.sort(Comparator.comparing(key -> days.get(key).size()).reversed());
+        keys.sort(
+                Comparator.comparing(
+                        key -> days.get((DayOfWeek) key).size()
+                        )
+                .reversed()
+        );
 
         EmbedBuilder eb = basicEmbed("Days");
         for(DayOfWeek day : keys) {
