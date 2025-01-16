@@ -1,11 +1,11 @@
 package dev.mydogsed.daniilexicalanalyzer.commands;
 
+import dev.mydogsed.daniilexicalanalyzer.DLAUtil;
 import dev.mydogsed.daniilexicalanalyzer.Main;
 import dev.mydogsed.daniilexicalanalyzer.commands.framework.SlashCommandDescription;
 import dev.mydogsed.daniilexicalanalyzer.commands.framework.SlashCommandExecutor;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
@@ -64,7 +64,7 @@ public class LexicalCommands {
 
         int sum = 0;
         for(Message message : messages) {
-            sum += message.getContentRaw().length();
+            sum += DLAUtil.getMessageContentRaw(message).length();
         }
         double avg = (double)sum / (double)messages.size();
 
@@ -82,8 +82,8 @@ public class LexicalCommands {
         messages.sort(Comparator.comparing(message -> message.getContentRaw().length()));
         Message longestMessage = messages.get(messages.size() - 1);
         EmbedBuilder eb = basicEmbed("Longest")
-                .setDescription("The longest single keyboard smash is " + longestMessage.getContentRaw().length() + " characters")
-                .addField(longestMessage.getContentRaw(), longestMessage.getJumpUrl(), false);
+                .setDescription("The longest single keyboard smash is " + DLAUtil.getMessageContentRaw(longestMessage).length() + " characters")
+                .addField(DLAUtil.getMessageContentRaw(longestMessage), longestMessage.getJumpUrl(), false);
         hook.editOriginalEmbeds(eb.build()).queue();
     }
 
@@ -128,7 +128,7 @@ public class LexicalCommands {
 
         StringBuilder csv = new StringBuilder();
         for(Message message : smashes) {
-            csv.append(String.format("%s, %tc%n", message.getContentRaw(), message.getTimeCreated()));
+            csv.append(String.format("%s, %tc%n", DLAUtil.getMessageContentRaw(message), message.getTimeCreated()));
         }
 
         InputStream stream = new ByteArrayInputStream(csv.toString().getBytes());
@@ -143,7 +143,7 @@ public class LexicalCommands {
         // Get the messages in the channel and write all of them into one string
         StringBuilder letters = new StringBuilder();
         for( Message message : messages ) {
-            letters.append(message.getContentDisplay().toLowerCase());
+            letters.append(DLAUtil.getMessageContentSanitized(message).toLowerCase());
         }
 
         // Get a character array from the string and sort it
@@ -180,7 +180,8 @@ public class LexicalCommands {
         List<Message> messages = getMessages(channel);
         List<Message> smashes = new LinkedList<>();
         for(Message message : messages) {
-            if(message.getContentRaw().startsWith("//")) {
+            String messageContent = DLAUtil.getMessageContentRaw(message);
+            if(messageContent.startsWith("//")) {
                 continue;
             }
             if (message.getAuthor().isBot()){
