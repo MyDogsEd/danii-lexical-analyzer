@@ -49,7 +49,7 @@ public class LexicalCommands {
         // Build an embed with that information
         EmbedBuilder eb = basicEmbed("Letter Percentages");
         for(int k = keys.size() - 1; k > keys.size() - 10; k--) {
-            eb.addField(String.valueOf(keys.get(k)), String.valueOf(map.get(keys.get(k))) + "%", false);
+            eb.addField(String.valueOf(keys.get(k)), map.get(keys.get(k)) + "%", false);
         }
         hook.editOriginalEmbeds(eb.build()).queue();
     }

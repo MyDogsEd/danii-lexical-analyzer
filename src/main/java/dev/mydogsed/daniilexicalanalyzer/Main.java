@@ -2,7 +2,6 @@ package dev.mydogsed.daniilexicalanalyzer;
 
 import dev.mydogsed.daniilexicalanalyzer.commands.LexicalCommands;
 import dev.mydogsed.daniilexicalanalyzer.commands.MiscCommands;
-import dev.mydogsed.daniilexicalanalyzer.commands.QuoteCommands;
 import dev.mydogsed.daniilexicalanalyzer.commands.framework.RegistrySlashCommandListener;
 import dev.mydogsed.daniilexicalanalyzer.commands.framework.CommandRegistry;
 import dev.mydogsed.daniilexicalanalyzer.commands.framework.SimpleSlashCommand;
