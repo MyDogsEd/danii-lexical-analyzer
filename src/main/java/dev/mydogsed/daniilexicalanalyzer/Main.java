@@ -2,12 +2,14 @@ package dev.mydogsed.daniilexicalanalyzer;
 
 import dev.mydogsed.daniilexicalanalyzer.commands.LexicalCommands;
 import dev.mydogsed.daniilexicalanalyzer.commands.MiscCommands;
+import dev.mydogsed.daniilexicalanalyzer.commands.framework.MessageCache;
 import dev.mydogsed.daniilexicalanalyzer.commands.framework.RegistrySlashCommandListener;
 import dev.mydogsed.daniilexicalanalyzer.commands.framework.CommandRegistry;
 import dev.mydogsed.daniilexicalanalyzer.commands.framework.SimpleSlashCommand;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.exceptions.InvalidTokenException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -33,6 +35,8 @@ public class Main extends ListenerAdapter {
 
     public static CommandRegistry commandRegistry = CommandRegistry.getInstance();
 
+    public static MessageCache messageCache;
+
     public static void main(String[] args) {
         // Log the bot in
         try {
@@ -40,16 +44,22 @@ public class Main extends ListenerAdapter {
                     .addEventListeners(new Main())
                     .enableIntents(GatewayIntent.MESSAGE_CONTENT)
                     .build();
-        } catch (FileNotFoundException e) {
+        }
+        // File not found
+        catch (FileNotFoundException e) {
             logger.error("API Key file not found.");
             logger.error("You must create the BOT_KEY.apikey file in the same directory as the .jar file.");
             logger.error("(Checking in {} for key file)", Paths.get("").toAbsolutePath());
-        } catch (InvalidTokenException e) {
+        }
+        // Token is not valid
+        catch (InvalidTokenException e) {
             logger.error("The provided token is invalid.");
-        } catch (IllegalArgumentException e){
+        }
+        //
+        catch (IllegalArgumentException e){
             logger.error("One of the provided arguments is invalid.");
         }
-        // From this point on, all code will be handled via events.
+        // The bot has already started at this point, so all code is handled by events
     }
 
     // Utility method to get the API key from the file present in the same directory
@@ -66,6 +76,12 @@ public class Main extends ListenerAdapter {
         registerCommandExecutors();
         registerSlashCommands();
         registerListeners();
+
+        // TODO: Set the bot's status to yellow or red on startup, then to green when it is actually ready to accept commands
+
+        // ALSO TODO: scout tf2 voicelines or something witty and funny for the bot's status
+
+        // Create the message cache for the #quotes-without-context channel
 
         logger.info("danii-lexical-analyzer is ready!");
     }

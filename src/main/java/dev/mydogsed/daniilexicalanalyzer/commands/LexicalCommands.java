@@ -90,7 +90,7 @@ public class LexicalCommands {
         // Command Boilerplate
         InteractionHook hook = event.getHook();
         event.deferReply().queue();
-
+ 
         // get the keyboard smashes
         List<Message> smashes = getSmashes(event.getChannel().asTextChannel());
 
