@@ -36,7 +36,9 @@ public class Main extends ListenerAdapter {
 
     public static CommandRegistry commandRegistry = CommandRegistry.getInstance();
 
-    public static MessageCache messageCache;
+    public static MessageCache smashesCache;
+
+    public static MessageCache quotesCache;
 
     public static void main(String[] args) {
         // Log the bot in
@@ -74,18 +76,29 @@ public class Main extends ListenerAdapter {
     @Override
     public void onReady(@NotNull ReadyEvent event) {
         logger.info("Starting danii-lexical-analyzer on JDA version " + JDAInfo.VERSION);
+
+        // Set the bot's status to idle
+        jda.getPresence().setIdle(true);
+
         // TODO: move this to a command or something, this really should only be done once, not every time the bot logs in
         registerCommandExecutors();
         registerSlashCommands();
         registerListeners();
+        createMessageCache();
+
+        jda.getPresence().setIdle(false);
 
         // TODO: Set the bot's status to yellow or red on startup, then to green when it is actually ready to accept commands
 
         // ALSO TODO: scout tf2 voicelines or something witty and funny for the bot's status
 
-        // Create the message cache for the #quotes-without-context channel
 
         logger.info("danii-lexical-analyzer is ready!");
+    }
+
+    private void createMessageCache() {
+        quotesCache = new MessageCache(Objects.requireNonNull(jda.getTextChannelById(1233098767658520668L)));
+        smashesCache = new MessageCache(Objects.requireNonNull(jda.getTextChannelById(1293961375273451615L)));
     }
 
     // Register the slash commands to discord
