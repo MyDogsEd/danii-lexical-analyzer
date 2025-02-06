@@ -10,21 +10,26 @@ import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class MessageCache {
 
-    private Map<Long, Message> cache;
+    private final Map<Long, Message> cache;
 
     private final TextChannel activeChannel;
 
     // Create a new MessageCache
     public MessageCache(TextChannel textChannel) {
+
+        // Create the map for the cache
+        this.cache = new HashMap<>();
+
         // Set the active channel
         this.activeChannel = textChannel;
+
+        // Get all the messages in the channel
         List<Message> messages = new LinkedList<>();
         MessageHistory messageHistory = textChannel.getHistory();
         while(true){
@@ -35,12 +40,19 @@ public class MessageCache {
             }
             messageHistory = textChannel.getHistoryAfter(messages.get(messages.size() - 1), 100).complete();
         }
+
+        // Put all the retrieved messages in the map
         for(Message message : messages){
             this.cache.put(message.getIdLong(), message);
         }
 
         // Register the listener
         Main.jda.addEventListener(new MessageCacheListener());
+    }
+
+    // Return a list of all messages in the cache
+    public List<Message> getMessages() {
+        return cache.values().stream().toList();
     }
 
     private void addMessage(Message message) {
@@ -59,15 +71,21 @@ public class MessageCache {
     class MessageCacheListener extends ListenerAdapter {
 
         public void onMessageReceived(@NotNull MessageReceivedEvent event) {
-            addMessage(event.getMessage());
+            if (event.getChannel().getIdLong() == activeChannel.getIdLong()){
+                addMessage(event.getMessage());
+            }
         }
 
         public void onMessageUpdate(@NotNull MessageUpdateEvent event) {
-            updateMessage(event.getMessage());
+            if (event.getChannel().getIdLong() == activeChannel.getIdLong()){
+                updateMessage(event.getMessage());
+            }
         }
 
         public void onMessageDelete(@NotNull MessageDeleteEvent event) {
-            deleteMessage(event.getMessageIdLong());
+            if (event.getChannel().getIdLong() == activeChannel.getIdLong()) {
+                deleteMessage(event.getMessageIdLong());
+            }
         }
     }
 }
