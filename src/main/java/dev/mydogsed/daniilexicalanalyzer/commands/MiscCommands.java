@@ -1,7 +1,7 @@
 package dev.mydogsed.daniilexicalanalyzer.commands;
 
+import dev.mydogsed.daniilexicalanalyzer.DLAUtil;
 import dev.mydogsed.daniilexicalanalyzer.commands.framework.CommandRegistry;
-import dev.mydogsed.daniilexicalanalyzer.commands.framework.SlashCommand;
 import dev.mydogsed.daniilexicalanalyzer.commands.framework.SlashCommandDescription;
 import dev.mydogsed.daniilexicalanalyzer.commands.framework.SlashCommandExecutor;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -43,7 +43,7 @@ public class MiscCommands {
 
         StringBuilder messageString = new StringBuilder();
         for (Message message : messages) {
-            messageString.append(String.format("[%tc] %s: %s%n", message.getTimeCreated(), message.getAuthor().getEffectiveName(), message.getContentRaw()));
+            messageString.append(String.format("[%tc] %s: %s%n", message.getTimeCreated(), message.getAuthor().getEffectiveName(), DLAUtil.getMessageContentRaw(message)));
         }
         InputStream stream = new ByteArrayInputStream(messageString.toString().getBytes());
         FileUpload upload = FileUpload.fromData(stream, "channel_messages.txt");

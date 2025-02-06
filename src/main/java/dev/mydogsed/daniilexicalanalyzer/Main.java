@@ -8,6 +8,7 @@ import dev.mydogsed.daniilexicalanalyzer.commands.framework.CommandRegistry;
 import dev.mydogsed.daniilexicalanalyzer.commands.framework.SimpleSlashCommand;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.JDAInfo;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
@@ -72,6 +73,7 @@ public class Main extends ListenerAdapter {
     // Register all commands and things after the bot is logged in and ready for us to do so
     @Override
     public void onReady(@NotNull ReadyEvent event) {
+        logger.info("Starting danii-lexical-analyzer on JDA version " + JDAInfo.VERSION);
         // TODO: move this to a command or something, this really should only be done once, not every time the bot logs in
         registerCommandExecutors();
         registerSlashCommands();
