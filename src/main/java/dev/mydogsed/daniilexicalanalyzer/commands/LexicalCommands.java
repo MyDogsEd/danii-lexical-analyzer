@@ -6,15 +6,18 @@ import dev.mydogsed.daniilexicalanalyzer.commands.framework.SlashCommandDescript
 import dev.mydogsed.daniilexicalanalyzer.commands.framework.SlashCommandExecutor;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.utils.FileUpload;
+import net.dv8tion.jda.api.utils.MarkdownUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.text.DecimalFormat;
 import java.time.DayOfWeek;
 import java.util.*;
 import java.util.List;
@@ -23,12 +26,14 @@ import static dev.mydogsed.daniilexicalanalyzer.commands.MiscCommands.getMessage
 
 public class LexicalCommands {
 
-    public static EmbedBuilder basicEmbed(String title){
+    public static EmbedBuilder basicEmbed(String title) {
+        Message randomSmash = randomSmash();
         return new EmbedBuilder()
                 .setTitle(title)
                 .setAuthor("danii-lexical-analyzer", "https://mydogsed.dev", Main.jda.getSelfUser().getAvatarUrl())
                 .setColor(new Color(184, 56, 59))
-                .setTimestamp(new Date().toInstant());
+                .setFooter('"' + randomSmash.getContentRaw() + '"')
+                .setTimestamp(randomSmash.getTimeCreated());
     }
 
     @SlashCommandExecutor("lettercount")
@@ -37,7 +42,10 @@ public class LexicalCommands {
         InteractionHook hook = event.getHook();
         event.deferReply().queue();
 
-        char[] chars = getCharactersInMessages(getSmashes(event.getChannel().asTextChannel()));
+        //
+        char[] chars = getCharactersInMessages(
+                Main.smashesCache.getMessages().stream().filter((Message message) -> !message.getContentRaw().contains("//")).toList()
+        );
         Map<Character, Integer> map = getCharacterOccurencesMap(chars);
 
         // Convert the keys in the hashmap to a list
@@ -48,7 +56,7 @@ public class LexicalCommands {
 
         // Build an embed with that information
         EmbedBuilder eb = basicEmbed("Letter Percentages");
-        for(int k = keys.size() - 1; k > keys.size() - 10; k--) {
+        for (int k = keys.size() - 1; k > keys.size() - 10; k--) {
             eb.addField(String.valueOf(keys.get(k)), map.get(keys.get(k)) + "%", false);
         }
         hook.editOriginalEmbeds(eb.build()).queue();
@@ -60,16 +68,17 @@ public class LexicalCommands {
         InteractionHook hook = event.getHook();
         event.deferReply().queue();
 
-        List<Message> messages = getSmashes(event.getChannel().asTextChannel());
+        List<Message> messages = Main.smashesCache.getMessages().stream().filter((Message message) -> !message.getContentRaw().contains("//")).toList();;
 
         int sum = 0;
-        for(Message message : messages) {
+        for (Message message : messages) {
             sum += DLAUtil.getMessageContentRaw(message).length();
         }
-        double avg = (double)sum / (double)messages.size();
+        double avg = (double) sum / (double) messages.size();
 
         EmbedBuilder eb = basicEmbed("Average Length")
-                .setDescription("The average length of each keyboard smash is " + avg + " characters");
+                .setDescription("The average length of each keyboard smash is " + new DecimalFormat("#.#").format(avg) + " characters");
+
         hook.editOriginalEmbeds(eb.build()).queue();
     }
 
@@ -78,7 +87,7 @@ public class LexicalCommands {
     public static void longestCommand(SlashCommandInteractionEvent event) {
         InteractionHook hook = event.getHook();
         event.deferReply().queue();
-        List<Message> messages = getSmashes(event.getChannel().asTextChannel());
+        List<Message> messages = new ArrayList<>(Main.smashesCache.getMessages().stream().filter((Message message) -> !message.getContentRaw().contains("//")).toList());
         messages.sort(Comparator.comparing(message -> message.getContentRaw().length()));
         Message longestMessage = messages.get(messages.size() - 1);
         EmbedBuilder eb = basicEmbed("Longest")
@@ -93,17 +102,17 @@ public class LexicalCommands {
         // Command Boilerplate
         InteractionHook hook = event.getHook();
         event.deferReply().queue();
- 
-        // get the keyboard smashes
-        List<Message> smashes = getSmashes(event.getChannel().asTextChannel());
 
-        // Sort all of the keyboard smashes by day
+        // get the keyboard smashes
+        List<Message> smashes = Main.smashesCache.getMessages().stream().filter((Message message) -> !message.getContentRaw().contains("//")).toList();
+
+        // Sort all the keyboard smashes by day
         Map<DayOfWeek, List<Message>> days = new HashMap<>();
         for (DayOfWeek day : DayOfWeek.values()) {
             days.put(day, new LinkedList<>());
         }
 
-        for(Message message : smashes) {
+        for (Message message : smashes) {
             List<Message> list = days.get(message.getTimeCreated().getDayOfWeek());
             list.add(message);
         }
@@ -111,13 +120,13 @@ public class LexicalCommands {
         List<DayOfWeek> keys = new ArrayList<>(days.keySet().stream().toList());
         keys.sort(
                 Comparator.comparing(
-                        key -> days.get((DayOfWeek) key).size()
+                                key -> days.get((DayOfWeek) key).size()
                         )
-                .reversed()
+                        .reversed()
         );
 
         EmbedBuilder eb = basicEmbed("Days");
-        for(DayOfWeek day : keys) {
+        for (DayOfWeek day : keys) {
             eb.addField(String.valueOf(day), days.get(day).size() + " keyboard smashes", false);
         }
 
@@ -129,10 +138,10 @@ public class LexicalCommands {
     public static void csvCommand(SlashCommandInteractionEvent event) {
         InteractionHook hook = event.getHook();
         event.deferReply().setEphemeral(false).queue();
-        List<Message> smashes = getSmashes(event.getChannel().asTextChannel());
+        List<Message> smashes = Main.smashesCache.getMessages().stream().filter((Message message) -> !message.getContentRaw().contains("//")).toList();;
 
         StringBuilder csv = new StringBuilder();
-        for(Message message : smashes) {
+        for (Message message : smashes) {
             csv.append(String.format("%s, %tc%n", DLAUtil.getMessageContentRaw(message), message.getTimeCreated()));
         }
 
@@ -141,18 +150,34 @@ public class LexicalCommands {
         hook.editOriginalAttachments(upload).queue();
 
     }
+
+    // Counts the number of danii's keyboard smashes
+    @SlashCommandExecutor("number")
+    @SlashCommandDescription("Count the number of danii's keyboard shmashes")
+    public static void numberCommand(SlashCommandInteractionEvent event) {
+        InteractionHook hook = event.getHook();
+        event.deferReply().queue();
+        int number = Main.smashesCache.getMessages()
+                .stream().filter((Message message) -> !message.getContentRaw().contains("//")).toList().size();
+
+        EmbedBuilder eb = basicEmbed("Number of Keyboard Smashes")
+                .setDescription("danii has archived " + number +  " keyboard smashes.");
+
+        hook.editOriginalEmbeds(eb.build()).queue();
+    }
+
     // Private utility methods for the commands in this class
 
     // Get all the characters in the list of messages
     private static char[] getCharactersInMessages(List<Message> messages) {
         // Get the messages in the channel and write all of them into one string
         StringBuilder letters = new StringBuilder();
-        for( Message message : messages ) {
+        for (Message message : messages) {
             letters.append(DLAUtil.getMessageContentSanitized(message).toLowerCase());
         }
 
         // Get a character array from the string and sort it
-        char[] arr = letters.toString().replaceAll("\\s","").toCharArray();
+        char[] arr = letters.toString().replaceAll("\\s", "").toCharArray();
         Arrays.sort(arr);
         return arr;
     }
@@ -173,27 +198,17 @@ public class LexicalCommands {
             }
             i = j;
 
-            if (!(letter == ' ')){
-                map.put(letter, (int)((((double)letterCount) / arr.length) * 100));
+            if (!(letter == ' ')) {
+                map.put(letter, (int) ((((double) letterCount) / arr.length) * 100));
             }
         }
         return map;
     }
 
-    // Out of all the messages in a channel, return any that don't contain spaces
-    private static List<Message> getSmashes(TextChannel channel) {
-        List<Message> messages = getMessages(channel);
-        List<Message> smashes = new LinkedList<>();
-        for(Message message : messages) {
-            String messageContent = DLAUtil.getMessageContentRaw(message);
-            if(messageContent.startsWith("//")) {
-                continue;
-            }
-            if (message.getAuthor().isBot()){
-                continue;
-            }
-            smashes.add(message);
-        }
-        return smashes;
+    // Get a random keyboard smash
+    public static Message randomSmash() {
+        List<Message> filtered = Main.smashesCache.getMessages()
+                .stream().filter((Message message) -> !message.getContentRaw().contains("//")).toList();
+        return filtered.get(new Random().nextInt(filtered.size()));
     }
 }

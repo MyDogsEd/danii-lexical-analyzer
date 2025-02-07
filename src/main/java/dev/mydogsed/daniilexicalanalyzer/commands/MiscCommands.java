@@ -22,16 +22,7 @@ import static dev.mydogsed.daniilexicalanalyzer.commands.LexicalCommands.basicEm
 
 public class MiscCommands {
 
-    // Counts the number of messages in a channel
-    @SlashCommandExecutor("number")
-    @SlashCommandDescription("Count the number of messages in this channel")
-    public static void numberCommand(SlashCommandInteractionEvent event) {
-        InteractionHook hook = event.getHook();
-        event.deferReply().queue();
-        List<Message> messages = getMessages(event.getChannel().asTextChannel());
 
-        hook.editOriginal("The channel has " + messages.size() + " messages" ).queue();
-    }
 
     // Uploads a file of the message history in that channel
     @SlashCommandExecutor("history")

@@ -9,6 +9,8 @@ import dev.mydogsed.daniilexicalanalyzer.commands.framework.SimpleSlashCommand;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.JDAInfo;
+import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
@@ -24,9 +26,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Paths;
-import java.util.Objects;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 public class Main extends ListenerAdapter {
 
@@ -38,7 +38,7 @@ public class Main extends ListenerAdapter {
 
     public static MessageCache smashesCache;
 
-    public static MessageCache quotesCache;
+    //public static MessageCache quotesCache;
 
     public static void main(String[] args) {
         // Log the bot in
@@ -78,27 +78,33 @@ public class Main extends ListenerAdapter {
         logger.info("Starting danii-lexical-analyzer on JDA version " + JDAInfo.VERSION);
 
         // Set the bot's status to idle
-        jda.getPresence().setIdle(true);
+        jda.getPresence().setPresence(OnlineStatus.DO_NOT_DISTURB, Activity.customStatus("starting..."), false);
 
         // TODO: move this to a command or something, this really should only be done once, not every time the bot logs in
+        // MessageCache has to come first, before we attach command executors
+        createMessageCache();
         registerCommandExecutors();
         registerSlashCommands();
         registerListeners();
-        createMessageCache();
 
-        jda.getPresence().setIdle(false);
+        // Set timer for pulling a random line as a status
+        new Timer().schedule(new TimerTask(){
+            public void run(){
+                jda.getPresence().setPresence(
+                        OnlineStatus.ONLINE,
+                        Activity.customStatus(String.format("\"%s\"", LexicalCommands.randomSmash().getContentRaw())),
+                        false
+                );
 
-        // TODO: Set the bot's status to yellow or red on startup, then to green when it is actually ready to accept commands
-
-        // ALSO TODO: scout tf2 voicelines or something witty and funny for the bot's status
-
+            }},0,1_800_000); // 1.8 million ms is 30 min
 
         logger.info("danii-lexical-analyzer is ready!");
     }
 
     private void createMessageCache() {
-        quotesCache = new MessageCache(Objects.requireNonNull(jda.getTextChannelById(1233098767658520668L)));
+        //quotesCache = new MessageCache(Objects.requireNonNull(jda.getTextChannelById(1233098767658520668L)));
         smashesCache = new MessageCache(Objects.requireNonNull(jda.getTextChannelById(1293961375273451615L)));
+        logger.info("MessageCache created");
     }
 
     // Register the slash commands to discord
