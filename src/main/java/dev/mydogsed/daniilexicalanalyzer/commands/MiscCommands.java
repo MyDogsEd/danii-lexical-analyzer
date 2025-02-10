@@ -22,8 +22,6 @@ import static dev.mydogsed.daniilexicalanalyzer.commands.LexicalCommands.basicEm
 
 public class MiscCommands {
 
-
-
     // Uploads a file of the message history in that channel
     @SlashCommandExecutor("history")
     @SlashCommandDescription("Upload the channel history in a text file")

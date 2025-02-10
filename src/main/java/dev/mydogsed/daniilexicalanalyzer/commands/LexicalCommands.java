@@ -27,13 +27,22 @@ import static dev.mydogsed.daniilexicalanalyzer.commands.MiscCommands.getMessage
 public class LexicalCommands {
 
     public static EmbedBuilder basicEmbed(String title) {
-        Message randomSmash = randomSmash();
         return new EmbedBuilder()
                 .setTitle(title)
                 .setAuthor("danii-lexical-analyzer", "https://mydogsed.dev", Main.jda.getSelfUser().getAvatarUrl())
                 .setColor(new Color(184, 56, 59))
-                .setFooter('"' + randomSmash.getContentRaw() + '"')
-                .setTimestamp(randomSmash.getTimeCreated());
+                .setTimestamp(new Date().toInstant());
+    }
+
+    @SlashCommandExecutor("randomkeyboardsmash")
+    @SlashCommandDescription("Returns a random one of danii's keyboard smashes")
+    public static void randomSmashCommand(SlashCommandInteractionEvent event) {
+        InteractionHook hook = event.getHook();
+        event.deferReply().queue();
+        Message random = randomSmash();
+        EmbedBuilder eb = basicEmbed("Random")
+                .addField(DLAUtil.getMessageContentRaw(random), random.getJumpUrl(), false);
+        hook.editOriginalEmbeds(eb.build()).queue();
     }
 
     @SlashCommandExecutor("lettercount")
@@ -182,6 +191,10 @@ public class LexicalCommands {
         return arr;
     }
 
+    /*
+    Returns a Map<Character, Integer> where the integer is the number of occurrences of that character
+    in the char[] parameter.
+     */
     @NotNull
     private static Map<Character, Integer> getCharacterOccurencesMap(char[] arr) {
         Map<Character, Integer> map = new HashMap<>();
