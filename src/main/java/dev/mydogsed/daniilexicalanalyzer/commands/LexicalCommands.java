@@ -6,12 +6,9 @@ import dev.mydogsed.daniilexicalanalyzer.commands.framework.SlashCommandDescript
 import dev.mydogsed.daniilexicalanalyzer.commands.framework.SlashCommandExecutor;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.utils.FileUpload;
-import net.dv8tion.jda.api.utils.MarkdownUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -21,8 +18,6 @@ import java.text.DecimalFormat;
 import java.time.DayOfWeek;
 import java.util.*;
 import java.util.List;
-
-import static dev.mydogsed.daniilexicalanalyzer.commands.MiscCommands.getMessages;
 
 public class LexicalCommands {
 
@@ -77,7 +72,7 @@ public class LexicalCommands {
         InteractionHook hook = event.getHook();
         event.deferReply().queue();
 
-        List<Message> messages = Main.smashesCache.getMessages().stream().filter((Message message) -> !message.getContentRaw().contains("//")).toList();;
+        List<Message> messages = Main.smashesCache.getMessages().stream().filter((Message message) -> !message.getContentRaw().contains("//")).toList();
 
         int sum = 0;
         for (Message message : messages) {
@@ -147,7 +142,7 @@ public class LexicalCommands {
     public static void csvCommand(SlashCommandInteractionEvent event) {
         InteractionHook hook = event.getHook();
         event.deferReply().setEphemeral(false).queue();
-        List<Message> smashes = Main.smashesCache.getMessages().stream().filter((Message message) -> !message.getContentRaw().contains("//")).toList();;
+        List<Message> smashes = Main.smashesCache.getMessages().stream().filter((Message message) -> !message.getContentRaw().contains("//")).toList();
 
         StringBuilder csv = new StringBuilder();
         for (Message message : smashes) {
