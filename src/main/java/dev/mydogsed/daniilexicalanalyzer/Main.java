@@ -38,7 +38,7 @@ public class Main extends ListenerAdapter {
 
     public static MessageCache smashesCache;
 
-    //public static MessageCache quotesCache;
+    public static MessageCache quotesCache;
 
     public static void main(String[] args) {
         // Log the bot in
@@ -102,9 +102,12 @@ public class Main extends ListenerAdapter {
     }
 
     private void createMessageCache() {
-        //quotesCache = new MessageCache(Objects.requireNonNull(jda.getTextChannelById(1233098767658520668L)));
+        logger.info("Creating the quotes cache...");
+        quotesCache = new MessageCache(Objects.requireNonNull(jda.getTextChannelById(1233098767658520668L)));
+
+        logger.info("Creating the smashes cache...");
         smashesCache = new MessageCache(Objects.requireNonNull(jda.getTextChannelById(1293961375273451615L)));
-        logger.info("MessageCache created");
+        logger.info("All message caches created!");
     }
 
     // Register the slash commands to discord
