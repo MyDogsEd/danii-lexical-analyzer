@@ -8,10 +8,25 @@ public class DLAUtil {
 
     // get message content raw, including forwarded messages
     public static String getMessageContentRaw(Message message){
-        if (message.getMessageReference() != null && message.getMessageReference().getType() == MessageReference.MessageReferenceType.FORWARD) {
+        if (message.getMessageReference() != null &&
+                message.getMessageReference().getType() == MessageReference.MessageReferenceType.FORWARD
+        ) {
             return message.getMessageSnapshots().get(0).getContentRaw();
-        } else {
+        }
+        else {
             return message.getContentRaw();
+        }
+    }
+
+    public static Message.Attachment getMessageContentImage(Message message){
+        if (message.getMessageReference() != null && // The message has a message reference
+                message.getMessageReference().getType() == MessageReference.MessageReferenceType.FORWARD && // Forwarded Message
+                message.getMessageSnapshots().get(0).getAttachments().size() == 1
+        ) {
+            return message.getMessageSnapshots().get(0).getAttachments().get(0);
+        }
+        else {
+            return message.getAttachments().get(0).getUrl();
         }
     }
 
