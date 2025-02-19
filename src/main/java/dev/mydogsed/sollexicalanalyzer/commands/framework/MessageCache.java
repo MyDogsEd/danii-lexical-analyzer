@@ -1,6 +1,6 @@
-package dev.mydogsed.daniilexicalanalyzer.commands.framework;
+package dev.mydogsed.sollexicalanalyzer.commands.framework;
 
-import dev.mydogsed.daniilexicalanalyzer.Main;
+import dev.mydogsed.sollexicalanalyzer.Main;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;

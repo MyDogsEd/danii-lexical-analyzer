@@ -30,20 +30,20 @@ test {
 
 jar {
     manifest {
-        attributes "Main-Class": "dev.mydogsed.daniilexicalanalyzer.Main"
+        attributes "Main-Class": "dev.mydogsed.sollexicalanalyzer.Main"
     }
 }
 
 // Set the file name
 // Copy the file to the execution directory
 shadowJar {
-    archiveFileName.set('danii-lexical-analyzer.jar')
+    archiveFileName.set('sol-lexical-analyzer.jar')
     finalizedBy("copyJar")
 }
 
 // Copy the .JAR file from the libs directory to the execution directory (Creating it if not present)
 tasks.register('copyJar', Copy) {
-    from "build/libs/danii-lexical-analyzer.jar"
+    from "build/libs/sol-lexical-analyzer.jar"
     into "execution"
 }
 
@@ -52,5 +52,5 @@ tasks.register("buildAndRunJar", JavaExec){
     dependsOn 'shadowJar'
     dependsOn 'copyJar'
     workingDir = file("execution")
-    classpath = files("execution/danii-lexical-analyzer.jar")
+    classpath = files("execution/sol-lexical-analyzer.jar")
 }

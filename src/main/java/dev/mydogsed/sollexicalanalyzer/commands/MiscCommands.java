@@ -1,9 +1,9 @@
-package dev.mydogsed.daniilexicalanalyzer.commands;
+package dev.mydogsed.sollexicalanalyzer.commands;
 
-import dev.mydogsed.daniilexicalanalyzer.DLAUtil;
-import dev.mydogsed.daniilexicalanalyzer.commands.framework.CommandRegistry;
-import dev.mydogsed.daniilexicalanalyzer.commands.framework.SlashCommandDescription;
-import dev.mydogsed.daniilexicalanalyzer.commands.framework.SlashCommandExecutor;
+import dev.mydogsed.sollexicalanalyzer.DLAUtil;
+import dev.mydogsed.sollexicalanalyzer.commands.framework.CommandRegistry;
+import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommandDescription;
+import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommandExecutor;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static dev.mydogsed.daniilexicalanalyzer.commands.LexicalCommands.basicEmbed;
+import static dev.mydogsed.sollexicalanalyzer.commands.LexicalCommands.basicEmbed;
 
 public class MiscCommands {
 

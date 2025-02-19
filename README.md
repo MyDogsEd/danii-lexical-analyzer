@@ -1,5 +1,5 @@
-# danii-lexical-analyzer
-A Discord bot to perform lexical analysis on danii's keyboard-smashes
+# sol-lexical-analyzer
+A Discord bot to perform lexical analysis on sol's keyboard-smashes
 
 ## Running
 In the main directory of the project, create the `execution`

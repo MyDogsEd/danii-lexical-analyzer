@@ -1,4 +1,4 @@
-package dev.mydogsed.daniilexicalanalyzer.commands.framework;
+package dev.mydogsed.sollexicalanalyzer.commands.framework;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.jetbrains.annotations.NotNull;
@@ -46,7 +46,7 @@ public class CommandRegistry {
             SlashCommandExecutor methodAnnotation = method.getAnnotation(SlashCommandExecutor.class);
             String name = methodAnnotation.value();
 
-            String description = "A danii-lexical-analyzer command";
+            String description = "A sol-lexical-analyzer command";
             if (method.isAnnotationPresent(SlashCommandDescription.class)) {
                 SlashCommandDescription descriptionAnnotation = method.getAnnotation(SlashCommandDescription.class);
                 description = descriptionAnnotation.value();

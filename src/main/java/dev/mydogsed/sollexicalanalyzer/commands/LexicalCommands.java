@@ -1,9 +1,9 @@
-package dev.mydogsed.daniilexicalanalyzer.commands;
+package dev.mydogsed.sollexicalanalyzer.commands;
 
-import dev.mydogsed.daniilexicalanalyzer.DLAUtil;
-import dev.mydogsed.daniilexicalanalyzer.Main;
-import dev.mydogsed.daniilexicalanalyzer.commands.framework.SlashCommandDescription;
-import dev.mydogsed.daniilexicalanalyzer.commands.framework.SlashCommandExecutor;
+import dev.mydogsed.sollexicalanalyzer.DLAUtil;
+import dev.mydogsed.sollexicalanalyzer.Main;
+import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommandDescription;
+import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommandExecutor;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -24,13 +24,13 @@ public class LexicalCommands {
     public static EmbedBuilder basicEmbed(String title) {
         return new EmbedBuilder()
                 .setTitle(title)
-                .setAuthor("danii-lexical-analyzer", "https://mydogsed.dev", Main.jda.getSelfUser().getAvatarUrl())
+                .setAuthor("sol-lexical-analyzer", "https://mydogsed.dev", Main.jda.getSelfUser().getAvatarUrl())
                 .setColor(new Color(184, 56, 59))
                 .setTimestamp(new Date().toInstant());
     }
 
     @SlashCommandExecutor("randomkeyboardsmash")
-    @SlashCommandDescription("Returns a random one of danii's keyboard smashes")
+    @SlashCommandDescription("Returns a random one of sol's keyboard smashes")
     public static void randomSmashCommand(SlashCommandInteractionEvent event) {
         InteractionHook hook = event.getHook();
         event.deferReply().queue();
@@ -41,7 +41,7 @@ public class LexicalCommands {
     }
 
     @SlashCommandExecutor("lettercount")
-    @SlashCommandDescription("Returns the percent of the top 10 letters in all of danii's keyboard smashes")
+    @SlashCommandDescription("Returns the percent of the top 10 letters in all of sol's keyboard smashes")
     public static void letterCountCommand(SlashCommandInteractionEvent event) {
         InteractionHook hook = event.getHook();
         event.deferReply().queue();
@@ -155,9 +155,9 @@ public class LexicalCommands {
 
     }
 
-    // Counts the number of danii's keyboard smashes
+    // Counts the number of sol's keyboard smashes
     @SlashCommandExecutor("number")
-    @SlashCommandDescription("Count the number of danii's keyboard shmashes")
+    @SlashCommandDescription("Count the number of sol's keyboard shmashes")
     public static void numberCommand(SlashCommandInteractionEvent event) {
         InteractionHook hook = event.getHook();
         event.deferReply().queue();
@@ -165,7 +165,7 @@ public class LexicalCommands {
                 .stream().filter((Message message) -> !message.getContentRaw().contains("//")).toList().size();
 
         EmbedBuilder eb = basicEmbed("Number of Keyboard Smashes")
-                .setDescription("danii has archived " + number +  " keyboard smashes.");
+                .setDescription("sol has archived " + number +  " keyboard smashes.");
 
         hook.editOriginalEmbeds(eb.build()).queue();
     }

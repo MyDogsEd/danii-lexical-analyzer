@@ -1,4 +1,4 @@
-package dev.mydogsed.daniilexicalanalyzer;
+package dev.mydogsed.sollexicalanalyzer;
 
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageReference;
@@ -26,7 +26,7 @@ public class DLAUtil {
             return message.getMessageSnapshots().get(0).getAttachments().get(0);
         }
         else {
-            return message.getAttachments().get(0).getUrl();
+            return message.getAttachments().get(0);
         }
     }
 
