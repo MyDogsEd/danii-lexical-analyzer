@@ -48,6 +48,8 @@ public class Main extends ListenerAdapter {
             jda = JDABuilder.createDefault(getApiKey())
                     .addEventListeners(new Main())
                     .enableIntents(GatewayIntent.MESSAGE_CONTENT)
+                    .setActivity(Activity.customStatus("starting..."))
+                    .setStatus(OnlineStatus.DO_NOT_DISTURB)
                     .build();
         }
         // File not found
@@ -60,7 +62,7 @@ public class Main extends ListenerAdapter {
         catch (InvalidTokenException e) {
             logger.error("The provided token is invalid.");
         }
-        //
+        // Everything Else
         catch (IllegalArgumentException e){
             logger.error("One of the provided arguments is invalid.");
         }
@@ -102,6 +104,7 @@ public class Main extends ListenerAdapter {
 
         logger.info("sol-lexical-analyzer is ready!");
 
+        /*
         // Set timer for putting a random quote into #quotes-bot
         new Timer().schedule(new TimerTask() {
             @Override
@@ -113,6 +116,7 @@ public class Main extends ListenerAdapter {
                                 ).build()
                         ).queue();
             }}, 0, 600_000);
+        */
     }
 
     private void createMessageCache() {

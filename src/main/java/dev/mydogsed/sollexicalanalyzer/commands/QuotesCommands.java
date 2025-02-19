@@ -10,8 +10,9 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.InteractionHook;
 
 import java.awt.*;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
+import java.util.stream.Collectors;
 
 public class QuotesCommands {
 
@@ -47,6 +48,32 @@ public class QuotesCommands {
                         .setDescription("#quotes-without-context has " + quotesList().size() + " quotes archived." )
                         .build()
         ).queue();
+    }
+
+    @SlashCommandExecutor("leaderboard")
+    @SlashCommandDescription("Display who has archived the most quotes")
+    public static void leaderboardCommand(SlashCommandInteractionEvent event){
+        InteractionHook hook = event.getHook();
+        event.deferReply().queue();
+
+        Map<String, Integer> map = new HashMap<>();
+
+        for (Message m : quotesList()) {
+            map.put(m.getAuthor().getName(), map.getOrDefault(m.getAuthor().getName(), 0) + 1);
+        }
+
+        List<String> keys = new ArrayList<>(map.keySet().stream().toList());
+
+        keys.sort(Comparator.comparing(map::get).reversed());
+
+        // Only keep the top 5 people
+        keys = keys.subList(0, Math.min(keys.size(), 5));
+
+        EmbedBuilder eb = quotesEmbed("Quotes Leaderboard");
+        for(int i = 0; i < keys.size(); i++){
+            eb.addField((i + 1) + ". " + keys.get(i), map.get(keys.get(i)) + " quotes", false);
+        }
+        hook.editOriginalEmbeds(eb.build()).queue();
     }
 
     @SlashCommandExecutor("randomquote")
