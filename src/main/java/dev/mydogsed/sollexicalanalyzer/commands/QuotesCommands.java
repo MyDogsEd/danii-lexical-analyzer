@@ -60,10 +60,10 @@ public class QuotesCommands {
 
         for (Message m : quotesList()) {
             String user;
-            if (m.getAuthor().getIdLong() == 340161181526523907L)
-                user = "femboy josh";
-            else
-                user = m.getAuthor().getName();
+            //if (m.getAuthor().getIdLong() == 340161181526523907L)
+                //user = "femboy josh";
+            //else
+            user = m.getAuthor().getName();
             map.put(user, map.getOrDefault(user, 0) + 1);
         }
 
