@@ -106,13 +106,14 @@ public class QuotesCommands {
         for(int i = 0; i < keys.size(); i++){
             String name = keys.get(i);
             int count = map.get(name);
-            double percent = Math.round(((double) count /quotesList().size()) * 100);
+            double percent = Math.round(( (double)count / (double)quotesList().size()) * 100);
             eb.addField(
                     String.format("%d. %s",(i + 1), name), // "1. Tom"
                     String.format("%d quotes (%.1f%%)", count, percent), // "390 quotes (19.5%)"
                     false
             );
         }
+        eb.setDescription("Total Quotes: "  + quotesList.size());
         hook.editOriginalEmbeds(eb.build()).queue();
     }
 

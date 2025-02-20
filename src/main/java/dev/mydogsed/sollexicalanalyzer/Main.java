@@ -42,6 +42,8 @@ public class Main extends ListenerAdapter {
 
     public static MessageCache quotesCache;
 
+    private static final long startTime = System.currentTimeMillis();
+
     public static void main(String[] args) {
         // Log the bot in
         try {
@@ -103,6 +105,7 @@ public class Main extends ListenerAdapter {
             }},0,1_800_000); // 1.8 million ms is 30 min
 
         logger.info("sol-lexical-analyzer is ready!");
+        logger.info ("Startup took {} s", (System.currentTimeMillis() - startTime) / 1000);
 
         /*
         // Set timer for putting a random quote into #quotes-bot
@@ -120,11 +123,20 @@ public class Main extends ListenerAdapter {
     }
 
     private void createMessageCache() {
+
         logger.info("Creating the quotes cache...");
+        long startTime = System.currentTimeMillis();
+        // Create the quotes cache
         quotesCache = new MessageCache(Objects.requireNonNull(jda.getTextChannelById(1233098767658520668L)));
+        logger.info("quotes cache took {}s", (System.currentTimeMillis() - startTime) / 1000);
 
         logger.info("Creating the smashes cache...");
+        startTime = System.currentTimeMillis();
+        // Create the smashes cache
         smashesCache = new MessageCache(Objects.requireNonNull(jda.getTextChannelById(1293961375273451615L)));
+        logger.info("smashes cache took {}s", (System.currentTimeMillis() - startTime) / 1000);
+
+        // All caches created
         logger.info("All message caches created!");
     }
 
