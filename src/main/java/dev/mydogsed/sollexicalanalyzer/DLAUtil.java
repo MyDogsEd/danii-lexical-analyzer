@@ -38,4 +38,14 @@ public class DLAUtil {
             return MarkdownSanitizer.sanitize(message.getContentRaw());
         }
     }
+
+    // If message is forwarded
+    public static boolean isForwarded(Message message) {
+        if (message.getMessageReference() != null && // The message has a message reference
+                message.getMessageReference().getType() == MessageReference.MessageReferenceType.FORWARD // Forwarded Message
+        ) {
+            return true;
+        }
+        return false;
+    }
 }

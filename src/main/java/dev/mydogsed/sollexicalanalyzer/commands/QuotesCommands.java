@@ -31,10 +31,35 @@ public class QuotesCommands {
                 .setFooter(quote.getAuthor().getEffectiveName(), quote.getAuthor().getAvatarUrl())
                 .setTimestamp(quote.getTimeCreated());
 
-        if (quote.getAttachments().isEmpty())
-            return eb.addField(DLAUtil.getMessageContentRaw(quote), quote.getJumpUrl(), false);
-        else
-            return eb.setImage(DLAUtil.getMessageContentImage(quote).getUrl()).setDescription(quote.getJumpUrl());
+        // Is this a forwarded message?
+        if (DLAUtil.isForwarded(quote)) {
+
+            // does the snapshot have an attachment?
+            if (!quote.getMessageSnapshots().get(0).getAttachments().isEmpty()) {
+                return eb.setImage(quote.getMessageSnapshots().get(0).getAttachments().get(0).getUrl())
+                        .setDescription(quote.getJumpUrl());
+            }
+
+            // No attachment, set the content to the forwarded message text
+            else {
+                return eb.addField(quote.getMessageSnapshots().get(0).getContentRaw(), quote.getJumpUrl(), false);
+            }
+        }
+
+        // This is not a forwarded message
+        else {
+
+            // does the message have an attachment?
+            if (!quote.getAttachments().isEmpty()) {
+                return eb.setImage(quote.getAttachments().get(0).getUrl())
+                        .setDescription(quote.getJumpUrl());
+            }
+
+            // No attachment, set the content to the message content
+            else {
+                return eb.addField(quote.getContentDisplay(), quote.getJumpUrl(), false);
+            }
+        }
     }
 
     @SlashCommandExecutor("numberquotes")
