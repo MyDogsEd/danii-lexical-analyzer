@@ -134,11 +134,13 @@ public class Main extends ListenerAdapter {
         // Hardcoded id for fruity factory and testing guild
         // MyDogsBot guild: 734502410952769607
         // Fruity Factory: 1233092684198182943
+        // GDC: 612467012018634753
 
         // Register slash commands for the two guilds:
         try {
             registerCommandsForGuild(Objects.requireNonNull(jda.getGuildById("734502410952769607")));
             registerCommandsForGuild(Objects.requireNonNull(jda.getGuildById("1233092684198182943")));
+            registerCommandsForGuild(Objects.requireNonNull(jda.getGuildById("612467012018634753")));
         } catch (NullPointerException e) {
             logger.error("Guilds not found for registering slash commands!");
         }
