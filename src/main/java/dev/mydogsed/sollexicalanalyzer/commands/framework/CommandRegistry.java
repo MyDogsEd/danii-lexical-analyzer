@@ -51,7 +51,7 @@ public class CommandRegistry {
                 SlashCommandDescription descriptionAnnotation = method.getAnnotation(SlashCommandDescription.class);
                 description = descriptionAnnotation.value();
             }
-            String finalDescription = description; // Effectivly final variable
+            String finalDescription = description; // Effectively final variable
             register(name, new SlashCommand() {
                 @Override
                 public void onCommand(SlashCommandInteractionEvent event) {

@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.interactions.InteractionHook;
 
 import java.awt.*;
+import java.time.Instant;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,7 +21,8 @@ public class QuotesCommands {
         return new EmbedBuilder()
                 .setTitle(title)
                 .setAuthor("sol-lexical-analyzer", "https://mydogsed.dev", Main.jda.getSelfUser().getAvatarUrl())
-                .setColor(new Color(88, 133, 162));
+                .setColor(new Color(88, 133, 162))
+                .setTimestamp(Instant.now());
     }
 
     public static EmbedBuilder randomQuotesEmbed(Message quote) {
@@ -82,8 +84,9 @@ public class QuotesCommands {
         event.deferReply().queue();
 
         Map<String, Integer> map = new HashMap<>();
+        List<Message> quotesList = quotesList();
 
-        for (Message m : quotesList()) {
+        for (Message m : quotesList) {
             String user;
             //if (m.getAuthor().getIdLong() == 340161181526523907L)
                 //user = "femboy josh";
@@ -101,7 +104,14 @@ public class QuotesCommands {
 
         EmbedBuilder eb = quotesEmbed("Quotes Leaderboard");
         for(int i = 0; i < keys.size(); i++){
-            eb.addField((i + 1) + ". " + keys.get(i), map.get(keys.get(i)) + " quotes", false);
+            String name = keys.get(i);
+            int count = map.get(name);
+            double percent = Math.round(((double) count /quotesList().size()) * 100);
+            eb.addField(
+                    String.format("%d. %s",(i + 1), name), // "1. Tom"
+                    String.format("%d quotes (%.1f%%)", count, percent), // "390 quotes (19.5%)"
+                    false
+            );
         }
         hook.editOriginalEmbeds(eb.build()).queue();
     }
