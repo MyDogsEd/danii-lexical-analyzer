@@ -21,7 +21,7 @@ public class DLAUtil {
     public static Message.Attachment getMessageContentImage(Message message){
         if (message.getMessageReference() != null && // The message has a message reference
                 message.getMessageReference().getType() == MessageReference.MessageReferenceType.FORWARD && // Forwarded Message
-                message.getMessageSnapshots().get(0).getAttachments().size() == 1
+                !message.getMessageSnapshots().get(0).getAttachments().isEmpty()
         ) {
             return message.getMessageSnapshots().get(0).getAttachments().get(0);
         }

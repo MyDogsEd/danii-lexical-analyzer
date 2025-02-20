@@ -59,7 +59,12 @@ public class QuotesCommands {
         Map<String, Integer> map = new HashMap<>();
 
         for (Message m : quotesList()) {
-            map.put(m.getAuthor().getName(), map.getOrDefault(m.getAuthor().getName(), 0) + 1);
+            String user;
+            if (m.getAuthor().getIdLong() == 340161181526523907L)
+                user = "femboy josh";
+            else
+                user = m.getAuthor().getName();
+            map.put(user, map.getOrDefault(user, 0) + 1);
         }
 
         List<String> keys = new ArrayList<>(map.keySet().stream().toList());
