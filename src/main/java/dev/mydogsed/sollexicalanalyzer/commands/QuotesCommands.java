@@ -5,9 +5,12 @@ import dev.mydogsed.sollexicalanalyzer.Main;
 import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommandDescription;
 import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommandExecutor;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.utils.AttachedFile;
 
 import java.awt.*;
 import java.time.Instant;
@@ -106,7 +109,7 @@ public class QuotesCommands {
         for(int i = 0; i < keys.size(); i++){
             String name = keys.get(i);
             int count = map.get(name);
-            double percent = Math.round(( (double)count / (double)quotesList().size()) * 100);
+            double percent = ((double)count / (double)quotesList().size()) * 100;
             eb.addField(
                     String.format("%d. %s",(i + 1), name), // "1. Tom"
                     String.format("%d quotes (%.1f%%)", count, percent), // "390 quotes (19.5%)"
@@ -123,6 +126,26 @@ public class QuotesCommands {
         InteractionHook hook = event.getHook();
         event.deferReply().queue();
         hook.editOriginalEmbeds(randomQuotesEmbed(randomQuote()).build()).queue();
+    }
+
+    @SlashCommandExecutor("error")
+    @SlashCommandDescription("oh no it broke")
+    public static void errorCommand(SlashCommandInteractionEvent event) {
+        InteractionHook hook = event.getHook();
+        event.deferReply().queue();
+
+        Member me = event.getGuild().retrieveMember(UserSnowflake.fromId(335802802335121408L)).complete();
+
+
+        // ping me
+        hook.editOriginal(me.getAsMention() + " it broke").queue();
+
+        hook.editOriginalAttachments(
+                AttachedFile.fromData(
+                        Objects.requireNonNull(QuotesCommands.class.getResourceAsStream("/broken.png")),
+                        "broken.png"
+                )
+        ).queue();
     }
 
     public static Message randomQuote(){
