@@ -134,18 +134,7 @@ public class QuotesCommands {
         InteractionHook hook = event.getHook();
         event.deferReply().queue();
 
-        Member me = event.getGuild().retrieveMember(UserSnowflake.fromId(335802802335121408L)).complete();
-
-
-        // ping me
-        hook.editOriginal(me.getAsMention() + " it broke").queue();
-
-        hook.editOriginalAttachments(
-                AttachedFile.fromData(
-                        Objects.requireNonNull(QuotesCommands.class.getResourceAsStream("/broken.png")),
-                        "broken.png"
-                )
-        ).queue();
+        throw new RuntimeException("This command failed successfully.");
     }
 
     public static Message randomQuote(){

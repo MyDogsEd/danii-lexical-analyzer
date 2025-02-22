@@ -1,6 +1,12 @@
 package dev.mydogsed.sollexicalanalyzer.commands.framework;
 
+import dev.mydogsed.sollexicalanalyzer.commands.QuotesCommands;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.utils.FileUpload;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
@@ -57,8 +63,9 @@ public class CommandRegistry {
                 public void onCommand(SlashCommandInteractionEvent event) {
                     try {
                         method.invoke(null, event);
-                    } catch (IllegalAccessException | InvocationTargetException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
+                        sendErrorMessage(event.getChannel().asTextChannel(), e.toString());
                     }
                 }
 
@@ -82,6 +89,18 @@ public class CommandRegistry {
 
     public Set<String> getCommandNames() {
         return map.keySet();
+    }
+
+    private void sendErrorMessage(TextChannel channel, String errorMessage) {
+        MessageCreateBuilder messageBuilder = new MessageCreateBuilder()
+                .setContent("Looks like something broke <@335802802335121408> \n `" + errorMessage + "`")
+                .addFiles(
+                        FileUpload.fromData(
+                                Objects.requireNonNull(QuotesCommands.class.getResourceAsStream("/broken.png")),
+                                "broken.png"
+                        )
+                );
+        channel.sendMessage(messageBuilder.build()).queue();
     }
 }
 
