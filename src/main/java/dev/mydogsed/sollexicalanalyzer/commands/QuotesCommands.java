@@ -7,10 +7,13 @@ import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommandExecutor;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageReference;
 import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.utils.AttachedFile;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.time.Instant;
@@ -19,6 +22,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class QuotesCommands {
+
+    private static final Logger log = LoggerFactory.getLogger(QuotesCommands.class);
 
     public static EmbedBuilder quotesEmbed(String title) {
         return new EmbedBuilder()
@@ -102,8 +107,8 @@ public class QuotesCommands {
 
         keys.sort(Comparator.comparing(map::get).reversed());
 
-        // Only keep the top 5 people
-        keys = keys.subList(0, Math.min(keys.size(), 5));
+        // Only keep the top 7 people
+        //keys = keys.subList(0, Math.min(keys.size(), 7));
 
         EmbedBuilder eb = quotesEmbed("Quotes Leaderboard");
         for(int i = 0; i < keys.size(); i++){
@@ -128,6 +133,37 @@ public class QuotesCommands {
         hook.editOriginalEmbeds(randomQuotesEmbed(randomQuote()).build()).queue();
     }
 
+    @SlashCommandExecutor("king")
+    @SlashCommandDescription("All hail the king of the quotes channel")
+    public static void kingCommand(SlashCommandInteractionEvent event) {
+        InteractionHook hook = event.getHook();
+        event.deferReply().queue();
+
+        Map<String, Integer> map = new HashMap<>();
+        List<Message> quotesList = quotesList();
+
+        for (Message m : quotesList) {
+            String user;
+            //if (m.getAuthor().getIdLong() == 340161181526523907L)
+            //user = "femboy josh";
+            //else
+            user = m.getAuthor().getName();
+            map.put(user, map.getOrDefault(user, 0) + 1);
+        }
+
+        List<String> keys = new ArrayList<>(map.keySet().stream().toList());
+
+        keys.sort(Comparator.comparing(map::get).reversed());
+
+        // Only keep the top 1 people
+        keys = keys.subList(0, Math.min(keys.size(), 1));
+        EmbedBuilder eb = quotesEmbed("King of Quotes");
+        eb.addField(keys.get(0), map.get(keys.get(0)) + " quotes archived", false);
+        eb.setDescription("ALL HAIL THE KING OF THE QUOTES CHANNEL");
+
+        hook.editOriginalEmbeds(eb.build()).queue();
+    }
+
     @SlashCommandExecutor("error")
     @SlashCommandDescription("oh no it broke")
     public static void errorCommand(SlashCommandInteractionEvent event) {
@@ -143,9 +179,14 @@ public class QuotesCommands {
 
     private static List<Message> quotesList() {
         return Main.quotesCache.getMessages().stream().filter((Message m) -> {
-            return m.getContentRaw().contains("\"") || // Message in quotes
+            return m.getContentRaw().contains("\"") || // straight quotes
+                    m.getContentRaw().contains("“") || // curly starting quote
+                    m.getContentRaw().contains("”") || // curly ending quote
+                    m.getContentRaw().contains(">") || // markdown quotes syntax
                     m.getAttachments().size() == 1 || // Message is an image
-                    m.getMessageSnapshots().size() == 1; // Forwarded Message
+                    // is a forwarded message
+                    m.getMessageReference() != null &&
+                            m.getMessageReference().getType() == MessageReference.MessageReferenceType.FORWARD;
         }).toList();
     }
 }
