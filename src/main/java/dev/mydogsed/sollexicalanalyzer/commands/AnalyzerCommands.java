@@ -23,14 +23,6 @@ import java.util.List;
 
 public class AnalyzerCommands implements SlashCommand {
 
-    public static EmbedBuilder basicEmbed(String title) {
-        return new EmbedBuilder()
-                .setTitle(title)
-                .setAuthor("sol-lexical-analyzer", "https://mydogsed.dev", Main.jda.getSelfUser().getAvatarUrl())
-                .setColor(new Color(184, 56, 59))
-                .setTimestamp(new Date().toInstant());
-    }
-
     // Switch for all the declared commands
     @Override
     public void onCommand(SlashCommandInteractionEvent event) {
@@ -67,6 +59,7 @@ public class AnalyzerCommands implements SlashCommand {
                 );
     }
 
+    // COMMANDS
 
     // /analyzer random
     private void randomCommand(SlashCommandInteractionEvent event) {
@@ -74,7 +67,7 @@ public class AnalyzerCommands implements SlashCommand {
         event.deferReply().queue();
 
         Message random = DLAUtil.randomSmash();
-        EmbedBuilder eb = basicEmbed("Random Keyboard Smash")
+        EmbedBuilder eb = analyzerEmbed("Random Keyboard Smash")
                 .addField(DLAUtil.getMessageContentRaw(random), random.getJumpUrl(), false);
         hook.editOriginalEmbeds(eb.build()).queue();
     }
@@ -96,7 +89,7 @@ public class AnalyzerCommands implements SlashCommand {
         keys.sort(Comparator.comparing(map::get));
 
         // Build an embed with that information
-        EmbedBuilder eb = basicEmbed("Letter Percentages");
+        EmbedBuilder eb = analyzerEmbed("Letter Percentages");
         for (int k = keys.size() - 1; k > keys.size() - 10; k--) {
             eb.addField(String.valueOf(keys.get(k)), map.get(keys.get(k)) + "%", false);
         }
@@ -116,7 +109,7 @@ public class AnalyzerCommands implements SlashCommand {
         }
         double avg = (double) sum / (double) messages.size();
 
-        EmbedBuilder eb = basicEmbed("Average Length")
+        EmbedBuilder eb = analyzerEmbed("Average Length")
                 .setDescription("The average length of each keyboard smash is " + new DecimalFormat("#.#").format(avg) + " characters");
 
         hook.editOriginalEmbeds(eb.build()).queue();
@@ -129,7 +122,7 @@ public class AnalyzerCommands implements SlashCommand {
         List<Message> messages = new ArrayList<>(Main.smashesCache.getMessages().stream().filter((Message message) -> !message.getContentRaw().contains("//")).toList());
         messages.sort(Comparator.comparing(message -> message.getContentRaw().length()));
         Message longestMessage = messages.get(messages.size() - 1);
-        EmbedBuilder eb = basicEmbed("Longest")
+        EmbedBuilder eb = analyzerEmbed("Longest")
                 .setDescription("The longest single keyboard smash is " + DLAUtil.getMessageContentRaw(longestMessage).length() + " characters")
                 .addField(DLAUtil.getMessageContentRaw(longestMessage), longestMessage.getJumpUrl(), false);
         hook.editOriginalEmbeds(eb.build()).queue();
@@ -163,7 +156,7 @@ public class AnalyzerCommands implements SlashCommand {
                         .reversed()
         );
 
-        EmbedBuilder eb = basicEmbed("Days");
+        EmbedBuilder eb = analyzerEmbed("Days");
         for (DayOfWeek day : keys) {
             eb.addField(String.valueOf(day), days.get(day).size() + " keyboard smashes", false);
         }
@@ -195,13 +188,13 @@ public class AnalyzerCommands implements SlashCommand {
         int number = Main.smashesCache.getMessages()
                 .stream().filter((Message message) -> !message.getContentRaw().contains("//")).toList().size();
 
-        EmbedBuilder eb = basicEmbed("Number of Keyboard Smashes")
+        EmbedBuilder eb = analyzerEmbed("Number of Keyboard Smashes")
                 .setDescription("sol has archived " + number +  " keyboard smashes.");
 
         hook.editOriginalEmbeds(eb.build()).queue();
     }
 
-    // Private utility methods for the commands in this class
+    // UTILITY
 
     // Get all the characters in the list of messages
     private static char[] getCharactersInMessages(List<Message> messages) {
@@ -242,5 +235,14 @@ public class AnalyzerCommands implements SlashCommand {
             }
         }
         return map;
+    }
+
+    // A basic embed to use for all the commands in this class.
+    private static EmbedBuilder analyzerEmbed(String title) {
+        return new EmbedBuilder()
+                .setTitle(title)
+                .setAuthor("sol-lexical-analyzer", "https://mydogsed.dev", Main.jda.getSelfUser().getAvatarUrl())
+                .setColor(new Color(184, 56, 59))
+                .setTimestamp(new Date().toInstant());
     }
 }

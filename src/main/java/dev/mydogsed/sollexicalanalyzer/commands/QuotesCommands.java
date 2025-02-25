@@ -2,6 +2,7 @@ package dev.mydogsed.sollexicalanalyzer.commands;
 
 import dev.mydogsed.sollexicalanalyzer.DLAUtil;
 import dev.mydogsed.sollexicalanalyzer.Main;
+import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommand;
 import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommandDescription;
 import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommandName;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -9,6 +10,9 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageReference;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +21,7 @@ import java.time.Instant;
 import java.util.*;
 import java.util.List;
 
-public class QuotesCommands {
+public class QuotesCommands implements SlashCommand {
 
     private static final Logger log = LoggerFactory.getLogger(QuotesCommands.class);
 
@@ -184,5 +188,19 @@ public class QuotesCommands {
                     m.getMessageReference() != null &&
                             m.getMessageReference().getType() == MessageReference.MessageReferenceType.FORWARD;
         }).toList();
+    }
+
+    @Override
+    public void onCommand(SlashCommandInteractionEvent event) {
+
+    }
+
+    @Override
+    public SlashCommandData getData() {
+        return Commands.slash("quotes", "quotes-without-context commands")
+                .addSubcommands(
+                        new SubcommandData("count", "Shows the number of quotes archived"),
+                        new SubcommandData("leaderboard", "Show")
+                )
     }
 }
