@@ -180,6 +180,7 @@ public class Main extends ListenerAdapter {
 
         // Register Classes that implement SlashCommand
         commandRegistry.register(new AnalyzerCommands());
+        commandRegistry.register(new QuotesCommands());
 
         // Log that command executors have been registered
         logger.info("Registered Command Executors");

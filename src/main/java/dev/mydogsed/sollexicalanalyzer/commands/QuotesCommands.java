@@ -8,8 +8,10 @@ import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommandName;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageReference;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
@@ -72,9 +74,7 @@ public class QuotesCommands implements SlashCommand {
         }
     }
 
-    @SlashCommandName("numberquotes")
-    @SlashCommandDescription("List the number of quotes in the #quotes-without-context channel")
-    public static void numberQuotesCommand(SlashCommandInteractionEvent event){
+    public static void countCommand(SlashCommandInteractionEvent event){
         InteractionHook hook = event.getHook();
         event.deferReply().queue();
 
@@ -85,23 +85,14 @@ public class QuotesCommands implements SlashCommand {
         ).queue();
     }
 
+    // use the annotation for this command so that there is a global /leaderboard command
     @SlashCommandName("leaderboard")
     @SlashCommandDescription("Display who has archived the most quotes")
     public static void leaderboardCommand(SlashCommandInteractionEvent event){
         InteractionHook hook = event.getHook();
         event.deferReply().queue();
 
-        Map<String, Integer> map = new HashMap<>();
-        List<Message> quotesList = quotesList();
-
-        for (Message m : quotesList) {
-            String user;
-            //if (m.getAuthor().getIdLong() == 340161181526523907L)
-                //user = "femboy josh";
-            //else
-            user = m.getAuthor().getName();
-            map.put(user, map.getOrDefault(user, 0) + 1);
-        }
+        Map<String, Integer> map = userQuotesMap();
 
         List<String> keys = new ArrayList<>(map.keySet().stream().toList());
 
@@ -121,56 +112,36 @@ public class QuotesCommands implements SlashCommand {
                     false
             );
         }
-        eb.setDescription("Total Quotes: "  + quotesList.size());
+        eb.setDescription("Total Quotes: "  + quotesList().size());
         hook.editOriginalEmbeds(eb.build()).queue();
     }
 
-    @SlashCommandName("randomquote")
-    @SlashCommandDescription("Returns a random quote from the #quotes-without-context channel")
     public static void randomQuoteCommand(SlashCommandInteractionEvent event) {
         InteractionHook hook = event.getHook();
         event.deferReply().queue();
         hook.editOriginalEmbeds(randomQuotesEmbed(randomQuote()).build()).queue();
     }
 
-    @SlashCommandName("king")
-    @SlashCommandDescription("All hail the king of the quotes channel")
     public static void kingCommand(SlashCommandInteractionEvent event) {
         InteractionHook hook = event.getHook();
         event.deferReply().queue();
 
-        Map<String, Integer> map = new HashMap<>();
-        List<Message> quotesList = quotesList();
+        // get the names and number of quotes
+        Map<String, Integer> map = userQuotesMap();
 
-        for (Message m : quotesList) {
-            String user;
-            //if (m.getAuthor().getIdLong() == 340161181526523907L)
-            //user = "femboy josh";
-            //else
-            user = m.getAuthor().getName();
-            map.put(user, map.getOrDefault(user, 0) + 1);
-        }
-
+        // assign the keys (names) to a new list
         List<String> keys = new ArrayList<>(map.keySet().stream().toList());
 
+        // sort the names from 1st to last on quotes
         keys.sort(Comparator.comparing(map::get).reversed());
 
-        // Only keep the top 1 people
+        // only keep the 1st person
         keys = keys.subList(0, Math.min(keys.size(), 1));
         EmbedBuilder eb = quotesEmbed("King of Quotes");
         eb.addField(keys.get(0), map.get(keys.get(0)) + " quotes archived", false);
         eb.setDescription("ALL HAIL THE KING OF THE QUOTES CHANNEL");
 
         hook.editOriginalEmbeds(eb.build()).queue();
-    }
-
-    @SlashCommandName("error")
-    @SlashCommandDescription("oh no it broke")
-    public static void errorCommand(SlashCommandInteractionEvent event) {
-        InteractionHook hook = event.getHook();
-        event.deferReply().queue();
-
-        throw new RuntimeException("This command failed successfully.");
     }
 
     public static Message randomQuote(){
@@ -192,7 +163,47 @@ public class QuotesCommands implements SlashCommand {
 
     @Override
     public void onCommand(SlashCommandInteractionEvent event) {
+        switch(Objects.requireNonNull(event.getSubcommandName())) {
+            case "count" -> countCommand(event);
+            case "leaderboard" -> leaderboardCommand(event);
+            case "randomquote" -> randomQuoteCommand(event);
+            case "king" -> kingCommand(event);
+            case "stats" -> statsCommand(event);
+        }
+    }
 
+    private void statsCommand(SlashCommandInteractionEvent event) {
+        // Number attributed
+        // first quote submitted
+        // last quote submitted
+        // leaderboard ranking
+        InteractionHook hook = event.getHook();
+        event.deferReply().queue();
+
+        User user = (event.getInteraction().getOption("user") != null) ?
+                event.getInteraction().getOption("user").getAsUser() :
+                event.getUser();
+
+        Map<String, Integer> map = userQuotesMap();
+
+        Message firstQuote = quotesList()
+                .stream()
+                .filter(
+                        (Message m) ->
+                                m.getAuthor().equals(user)
+                )
+                .sorted(
+                        (Message m1, Message m2) ->
+                )
+
+
+
+        Message lastQuote = quotesList().stream().filter((Message m) -> m.getAuthor().equals(user)).re
+
+        EmbedBuilder eb = quotesEmbed(user.getEffectiveName())
+                .setThumbnail(user.getEffectiveAvatarUrl())
+                .setDescription("Has archived " + map.getOrDefault(user.getName(), 0) + " quotes")
+                .addField("first quote submitted", )
     }
 
     @Override
@@ -200,7 +211,27 @@ public class QuotesCommands implements SlashCommand {
         return Commands.slash("quotes", "quotes-without-context commands")
                 .addSubcommands(
                         new SubcommandData("count", "Shows the number of quotes archived"),
-                        new SubcommandData("leaderboard", "Show")
-                )
+                        new SubcommandData("leaderboard", "Rank members by how many quotes archived."),
+                        new SubcommandData("random", "Show a random wquote"),
+                        new SubcommandData("king", "King of Quotes"),
+                        new SubcommandData("stats", "List user quotes stats")
+                                .addOption(
+                                        OptionType.USER,
+                                        "user",
+                                        "The user whose stats should be shown (leave blank for your stats)",
+                                        false
+                                )
+                );
+    }
+
+    public static Map<String, Integer> userQuotesMap() {
+        Map<String, Integer> map = new HashMap<>();
+        List<Message> quotesList = quotesList();
+        for (Message m : quotesList) {
+            String user;
+            user = m.getAuthor().getName();
+            map.put(user, map.getOrDefault(user, 0) + 1);
+        }
+        return map;
     }
 }
