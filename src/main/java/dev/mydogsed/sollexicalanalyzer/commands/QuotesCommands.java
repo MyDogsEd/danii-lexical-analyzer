@@ -211,8 +211,18 @@ public class QuotesCommands implements SlashCommand {
         EmbedBuilder eb = quotesEmbed(user.getEffectiveName())
                 .setThumbnail(user.getEffectiveAvatarUrl())
                 .setDescription("Has archived " + map.getOrDefault(user.getName(), 0) + " quotes")
-                .addField("first quote submitted", firstQuote.getTimeCreated().format(DateTimeFormatter.ofPattern("d MMM uuuu")), true)
-                .addField("last quote submitted", lastQuote.getTimeCreated().format(DateTimeFormatter.ofPattern("d MMM uuuu")), true)
+                .addField(
+                        "first quote submitted",
+                        firstQuote.getTimeCreated().format(DateTimeFormatter.ofPattern("d MMM uuuu"))
+                                + "\n" + firstQuote.getJumpUrl(),
+                        true
+                )
+                .addField(
+                        "latest quote submitted",
+                        lastQuote.getTimeCreated().format(DateTimeFormatter.ofPattern("d MMM uuuu"))
+                                + "\n" + lastQuote.getJumpUrl(),
+                        true
+                )
                 .addField(
                         "leaderboard ranking",
                         (leaderBoard().indexOf(user.getName()) + 1) + "/" + map.size(),
