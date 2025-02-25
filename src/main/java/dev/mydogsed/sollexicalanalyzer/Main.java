@@ -168,8 +168,7 @@ public class Main extends ListenerAdapter {
         CommandListUpdateAction updateAction = guild.updateCommands();
         for(String commandName : commandNames){
             updateAction = updateAction.addCommands(
-                    Commands.slash(commandName, registry.getExecutor(commandName).getDescription())
-                            .setGuildOnly(true)
+                    registry.getExecutor(commandName).data().setGuildOnly(true)
             );
         }
         updateAction.queue();
@@ -179,11 +178,18 @@ public class Main extends ListenerAdapter {
     public static void registerCommandExecutors(){
 
         // Register simple slash commands
-        commandRegistry.register("hello", new SimpleSlashCommand("Hello!",
-                "Sends a hello message!"));
-        commandRegistry.register("invite", new SimpleSlashCommand("Invite the bot here: " +
-                "https://discord.com/oauth2/authorize?client_id=1294039897316917278&permissions=8&scope=bot",
-                "Prints the invite link for the bot to the chanel!"));
+        commandRegistry.register(new SimpleSlashCommand(
+                "hello",
+                "Sends a hello message!",
+                "Hello!"
+        ));
+
+        commandRegistry.register(new SimpleSlashCommand(
+                "invite",
+                "Prints the invite link for the bot to the chanel!",
+                "Invite the bot here: "
+                        + "https://discord.com/oauth2/authorize?client_id=1294039897316917278&permissions=8&scope=bot"
+        ));
 
         // Register classes that use the @SlashCommand decorators
         commandRegistry.registerMethods(LexicalCommands.class);
