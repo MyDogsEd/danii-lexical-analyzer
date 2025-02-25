@@ -1,6 +1,6 @@
 package dev.mydogsed.sollexicalanalyzer;
 
-import dev.mydogsed.sollexicalanalyzer.commands.LexicalCommands;
+import dev.mydogsed.sollexicalanalyzer.commands.AnalyzerCommands;
 import dev.mydogsed.sollexicalanalyzer.commands.MiscCommands;
 import dev.mydogsed.sollexicalanalyzer.commands.QuotesCommands;
 import dev.mydogsed.sollexicalanalyzer.commands.framework.MessageCache;
@@ -13,12 +13,9 @@ import net.dv8tion.jda.api.JDAInfo;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.exceptions.InvalidTokenException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import org.jetbrains.annotations.NotNull;
@@ -98,7 +95,7 @@ public class Main extends ListenerAdapter {
             public void run(){
                 jda.getPresence().setPresence(
                         OnlineStatus.ONLINE,
-                        Activity.customStatus(String.format("\"%s\"", LexicalCommands.randomSmash().getContentRaw())),
+                        Activity.customStatus(String.format("\"%s\"", DLAUtil.randomSmash().getContentRaw())),
                         false
                 );
 
@@ -106,20 +103,6 @@ public class Main extends ListenerAdapter {
 
         logger.info("sol-lexical-analyzer is ready!");
         logger.info ("Startup took {} s", (System.currentTimeMillis() - startTime) / 1000);
-
-        /*
-        // Set timer for putting a random quote into #quotes-bot
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                jda.getChannelById(TextChannel.class, "1341524569973850224")
-                        .sendMessageEmbeds(
-                                QuotesCommands.randomQuotesEmbed(
-                                        QuotesCommands.randomQuote()
-                                ).build()
-                        ).queue();
-            }}, 0, 600_000);
-        */
     }
 
     private void createMessageCache() {
@@ -168,7 +151,7 @@ public class Main extends ListenerAdapter {
         CommandListUpdateAction updateAction = guild.updateCommands();
         for(String commandName : commandNames){
             updateAction = updateAction.addCommands(
-                    registry.getExecutor(commandName).data().setGuildOnly(true)
+                    registry.getExecutor(commandName).getData().setGuildOnly(true)
             );
         }
         updateAction.queue();
@@ -192,11 +175,11 @@ public class Main extends ListenerAdapter {
         ));
 
         // Register classes that use the @SlashCommand decorators
-        commandRegistry.registerMethods(LexicalCommands.class);
         commandRegistry.registerMethods(MiscCommands.class);
         commandRegistry.registerMethods(QuotesCommands.class);
 
         // Register Classes that implement SlashCommand
+        commandRegistry.register(new AnalyzerCommands());
 
         // Log that command executors have been registered
         logger.info("Registered Command Executors");

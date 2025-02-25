@@ -1,7 +1,7 @@
 package dev.mydogsed.sollexicalanalyzer.commands.framework;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 public interface SlashCommand {
 
@@ -10,6 +10,6 @@ public interface SlashCommand {
      */
     void onCommand(SlashCommandInteractionEvent event);
 
-    CommandData data();
+    SlashCommandData getData();
 
 }

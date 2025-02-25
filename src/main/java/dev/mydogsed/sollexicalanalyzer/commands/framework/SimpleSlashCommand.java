@@ -3,6 +3,7 @@ package dev.mydogsed.sollexicalanalyzer.commands.framework;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 /*
 Represents a simple call-and-response command, where the same message is used for all responses.
@@ -25,7 +26,7 @@ public class SimpleSlashCommand implements SlashCommand {
     }
 
     @Override
-    public CommandData data() {
+    public SlashCommandData getData() {
         return Commands.slash(name, description);
     }
 }

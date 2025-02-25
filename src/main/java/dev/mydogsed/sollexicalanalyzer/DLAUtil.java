@@ -4,6 +4,9 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageReference;
 import net.dv8tion.jda.api.utils.MarkdownSanitizer;
 
+import java.util.List;
+import java.util.Random;
+
 public class DLAUtil {
 
     // get message content raw, including forwarded messages
@@ -47,5 +50,12 @@ public class DLAUtil {
             return true;
         }
         return false;
+    }
+
+    // return a random keyboard smash
+    public static Message randomSmash() {
+        List<Message> filtered = Main.smashesCache.getMessages()
+                .stream().filter((Message message) -> !message.getContentRaw().contains("//")).toList();
+        return filtered.get(new Random().nextInt(filtered.size()));
     }
 }

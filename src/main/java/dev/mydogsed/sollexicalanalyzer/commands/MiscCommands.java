@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static dev.mydogsed.sollexicalanalyzer.commands.LexicalCommands.basicEmbed;
 
 public class MiscCommands {
 
@@ -45,11 +44,11 @@ public class MiscCommands {
         InteractionHook hook = event.getHook();
         event.deferReply().queue();
 
-        EmbedBuilder eb = basicEmbed("Help Commands");
+        EmbedBuilder eb = QuotesCommands.quotesEmbed("Help");
         CommandRegistry registry = CommandRegistry.getInstance();
         Set<String> commandNames = registry.getCommandNames();
         for(String commandName : commandNames) {
-            eb.addField("/" + commandName, registry.getExecutor(commandName).getDescription(), true);
+            eb.addField("/" + commandName, registry.getExecutor(commandName).getData().getDescription(), true);
         }
         hook.editOriginalEmbeds(eb.build()).queue();
     }

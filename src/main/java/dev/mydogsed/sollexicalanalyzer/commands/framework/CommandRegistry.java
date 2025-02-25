@@ -3,8 +3,8 @@ package dev.mydogsed.sollexicalanalyzer.commands.framework;
 import dev.mydogsed.sollexicalanalyzer.commands.QuotesCommands;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 
@@ -34,7 +34,7 @@ public class CommandRegistry {
 
     // Public method to register commands in the registry
     public void register(SlashCommand executor) {
-        map.put(executor.data().getName(), executor);
+        map.put(executor.getData().getName(), executor);
     }
 
     /*
@@ -67,7 +67,7 @@ public class CommandRegistry {
                 }
 
                 @Override
-                public CommandData data() {
+                public SlashCommandData getData() {
                     return Commands.slash(name, finalDescription);
                 }
             });

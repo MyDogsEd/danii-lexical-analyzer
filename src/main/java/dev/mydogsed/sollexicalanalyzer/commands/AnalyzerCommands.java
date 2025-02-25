@@ -2,12 +2,14 @@ package dev.mydogsed.sollexicalanalyzer.commands;
 
 import dev.mydogsed.sollexicalanalyzer.DLAUtil;
 import dev.mydogsed.sollexicalanalyzer.Main;
-import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommandDescription;
-import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommandName;
+import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,7 +21,7 @@ import java.time.DayOfWeek;
 import java.util.*;
 import java.util.List;
 
-public class LexicalCommands {
+public class AnalyzerCommands implements SlashCommand {
 
     public static EmbedBuilder basicEmbed(String title) {
         return new EmbedBuilder()
@@ -29,24 +31,59 @@ public class LexicalCommands {
                 .setTimestamp(new Date().toInstant());
     }
 
-    @SlashCommandName("randomkeyboardsmash")
-    @SlashCommandDescription("Returns a random one of sol's keyboard smashes")
-    public static void randomSmashCommand(SlashCommandInteractionEvent event) {
+    // Switch for all the declared commands
+    @Override
+    public void onCommand(SlashCommandInteractionEvent event) {
+        switch (Objects.requireNonNull(event.getSubcommandName())) {
+            case "random" -> randomCommand(event);
+            case "letters" -> lettersCommand(event);
+            case "averagelength" -> averageLengthCommand(event);
+            case "longest" -> longestCommand(event);
+            case "days" -> daysCommand(event);
+            case "csv" -> csvCommand(event);
+            case "count" -> countCommand(event);
+
+        }
+    }
+
+    // Used to register all the commands
+    @Override
+    public SlashCommandData getData() {
+        return Commands.slash("analyzer", "analyze sol's keyboard smashes")
+                .addSubcommands(
+                        new SubcommandData("random", "Random Keyboard Smash"),
+                        new SubcommandData(
+                                "letters",
+                                "Calculate the % of each letter in sol's keyboard smashes"
+                        ),
+                        new SubcommandData(
+                                "averagelength",
+                                "Calculate the average length of sol's keyboard smashes"
+                        ),
+                        new SubcommandData("longest", "Show the single longest keyboard smash"),
+                        new SubcommandData("days", "What days does sol keyboard smash?"),
+                        new SubcommandData("csv", "Record of all keyboard smashes in a csv file."),
+                        new SubcommandData("count", "How many total keyboard smashes?")
+                );
+    }
+
+
+    // /analyzer random
+    private void randomCommand(SlashCommandInteractionEvent event) {
         InteractionHook hook = event.getHook();
         event.deferReply().queue();
-        Message random = randomSmash();
-        EmbedBuilder eb = basicEmbed("Random")
+
+        Message random = DLAUtil.randomSmash();
+        EmbedBuilder eb = basicEmbed("Random Keyboard Smash")
                 .addField(DLAUtil.getMessageContentRaw(random), random.getJumpUrl(), false);
         hook.editOriginalEmbeds(eb.build()).queue();
     }
 
-    @SlashCommandName("lettercount")
-    @SlashCommandDescription("Returns the percent of the top 10 letters in all of sol's keyboard smashes")
-    public static void letterCountCommand(SlashCommandInteractionEvent event) {
+    // /analyzer letters
+    private void lettersCommand(SlashCommandInteractionEvent event) {
         InteractionHook hook = event.getHook();
         event.deferReply().queue();
 
-        //
         char[] chars = getCharactersInMessages(
                 Main.smashesCache.getMessages().stream().filter((Message message) -> !message.getContentRaw().contains("//")).toList()
         );
@@ -66,9 +103,8 @@ public class LexicalCommands {
         hook.editOriginalEmbeds(eb.build()).queue();
     }
 
-    @SlashCommandName("averagelength")
-    @SlashCommandDescription("Gets the average length of each keyboard smash")
-    public static void averageLengthCommand(SlashCommandInteractionEvent event) {
+    // /analyzer averagelength
+    private void averageLengthCommand(SlashCommandInteractionEvent event) {
         InteractionHook hook = event.getHook();
         event.deferReply().queue();
 
@@ -86,9 +122,8 @@ public class LexicalCommands {
         hook.editOriginalEmbeds(eb.build()).queue();
     }
 
-    @SlashCommandName("longest")
-    @SlashCommandDescription("Returns the longest single keyboard smash in the channel")
-    public static void longestCommand(SlashCommandInteractionEvent event) {
+    // /analyzer longest
+    private void longestCommand(SlashCommandInteractionEvent event) {
         InteractionHook hook = event.getHook();
         event.deferReply().queue();
         List<Message> messages = new ArrayList<>(Main.smashesCache.getMessages().stream().filter((Message message) -> !message.getContentRaw().contains("//")).toList());
@@ -100,9 +135,8 @@ public class LexicalCommands {
         hook.editOriginalEmbeds(eb.build()).queue();
     }
 
-    @SlashCommandName("days")
-    @SlashCommandDescription("What day do most keyboard smashes take place on?")
-    public static void daysCommand(SlashCommandInteractionEvent event) {
+    // /analyzer days
+    private void daysCommand(SlashCommandInteractionEvent event) {
         // Command Boilerplate
         InteractionHook hook = event.getHook();
         event.deferReply().queue();
@@ -137,9 +171,8 @@ public class LexicalCommands {
         hook.editOriginalEmbeds(eb.build()).queue();
     }
 
-    @SlashCommandName("csv")
-    @SlashCommandDescription("Upload a CSV file containing the keyboard smashes in the channel")
-    public static void csvCommand(SlashCommandInteractionEvent event) {
+    // /analyzer csv
+    private void csvCommand(SlashCommandInteractionEvent event) {
         InteractionHook hook = event.getHook();
         event.deferReply().setEphemeral(false).queue();
         List<Message> smashes = Main.smashesCache.getMessages().stream().filter((Message message) -> !message.getContentRaw().contains("//")).toList();
@@ -155,10 +188,8 @@ public class LexicalCommands {
 
     }
 
-    // Counts the number of sol's keyboard smashes
-    @SlashCommandName("number")
-    @SlashCommandDescription("Count the number of sol's keyboard shmashes")
-    public static void numberCommand(SlashCommandInteractionEvent event) {
+    // /analyzer count
+    private void countCommand(SlashCommandInteractionEvent event) {
         InteractionHook hook = event.getHook();
         event.deferReply().queue();
         int number = Main.smashesCache.getMessages()
@@ -187,8 +218,8 @@ public class LexicalCommands {
     }
 
     /*
-    Returns a Map<Character, Integer> where the integer is the number of occurrences of that character
-    in the char[] parameter.
+    Returns a Map<Character, Integer> where the Integer is the number of occurrences of that character
+    in the char[] array.
      */
     @NotNull
     private static Map<Character, Integer> getCharacterOccurencesMap(char[] arr) {
@@ -211,12 +242,5 @@ public class LexicalCommands {
             }
         }
         return map;
-    }
-
-    // Get a random keyboard smash
-    public static Message randomSmash() {
-        List<Message> filtered = Main.smashesCache.getMessages()
-                .stream().filter((Message message) -> !message.getContentRaw().contains("//")).toList();
-        return filtered.get(new Random().nextInt(filtered.size()));
     }
 }
