@@ -6,6 +6,7 @@ import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommand;
 import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommandDescription;
 import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommandName;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.ISnowflake;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageReference;
 import net.dv8tion.jda.api.entities.User;
@@ -20,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
@@ -189,21 +191,35 @@ public class QuotesCommands implements SlashCommand {
         Message firstQuote = quotesList()
                 .stream()
                 .filter(
-                        (Message m) ->
-                                m.getAuthor().equals(user)
+                        (Message m) -> m.getAuthor().equals(user)
                 )
                 .sorted(
-                        (Message m1, Message m2) ->
+                        Comparator.comparing(ISnowflake::getTimeCreated)
+                ).toList().get(0);
+
+
+
+        Message lastQuote = quotesList()
+                .stream()
+                .filter(
+                        (Message m) -> m.getAuthor().equals(user)
                 )
-
-
-
-        Message lastQuote = quotesList().stream().filter((Message m) -> m.getAuthor().equals(user)).re
+                .sorted(
+                        Comparator.comparing(ISnowflake::getTimeCreated).reversed()
+                ).toList().get(0);
 
         EmbedBuilder eb = quotesEmbed(user.getEffectiveName())
                 .setThumbnail(user.getEffectiveAvatarUrl())
                 .setDescription("Has archived " + map.getOrDefault(user.getName(), 0) + " quotes")
-                .addField("first quote submitted", )
+                .addField("first quote submitted", firstQuote.getTimeCreated().format(DateTimeFormatter.ofPattern("d MMM uuuu")), true)
+                .addField("last quote submitted", lastQuote.getTimeCreated().format(DateTimeFormatter.ofPattern("d MMM uuuu")), true)
+                .addField(
+                        "leaderboard ranking",
+                        (leaderBoard().indexOf(user.getName()) + 1) + "/" + map.size(),
+                        true
+                );
+
+        hook.editOriginalEmbeds(eb.build()).queue();
     }
 
     @Override
@@ -233,5 +249,12 @@ public class QuotesCommands implements SlashCommand {
             map.put(user, map.getOrDefault(user, 0) + 1);
         }
         return map;
+    }
+
+    public static List<String> leaderBoard() {
+        Map<String, Integer> map = userQuotesMap();
+        List<String> list = new ArrayList<>(map.keySet());
+        list.sort(Comparator.comparing(map::get).reversed());
+        return list;
     }
 }
