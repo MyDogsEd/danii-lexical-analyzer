@@ -3,15 +3,12 @@ package dev.mydogsed.sollexicalanalyzer.commands;
 import dev.mydogsed.sollexicalanalyzer.DLAUtil;
 import dev.mydogsed.sollexicalanalyzer.Main;
 import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommandDescription;
-import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommandExecutor;
+import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommandName;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageReference;
-import net.dv8tion.jda.api.entities.UserSnowflake;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
-import net.dv8tion.jda.api.utils.AttachedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +16,6 @@ import java.awt.*;
 import java.time.Instant;
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class QuotesCommands {
 
@@ -72,7 +68,7 @@ public class QuotesCommands {
         }
     }
 
-    @SlashCommandExecutor("numberquotes")
+    @SlashCommandName("numberquotes")
     @SlashCommandDescription("List the number of quotes in the #quotes-without-context channel")
     public static void numberQuotesCommand(SlashCommandInteractionEvent event){
         InteractionHook hook = event.getHook();
@@ -85,7 +81,7 @@ public class QuotesCommands {
         ).queue();
     }
 
-    @SlashCommandExecutor("leaderboard")
+    @SlashCommandName("leaderboard")
     @SlashCommandDescription("Display who has archived the most quotes")
     public static void leaderboardCommand(SlashCommandInteractionEvent event){
         InteractionHook hook = event.getHook();
@@ -125,7 +121,7 @@ public class QuotesCommands {
         hook.editOriginalEmbeds(eb.build()).queue();
     }
 
-    @SlashCommandExecutor("randomquote")
+    @SlashCommandName("randomquote")
     @SlashCommandDescription("Returns a random quote from the #quotes-without-context channel")
     public static void randomQuoteCommand(SlashCommandInteractionEvent event) {
         InteractionHook hook = event.getHook();
@@ -133,7 +129,7 @@ public class QuotesCommands {
         hook.editOriginalEmbeds(randomQuotesEmbed(randomQuote()).build()).queue();
     }
 
-    @SlashCommandExecutor("king")
+    @SlashCommandName("king")
     @SlashCommandDescription("All hail the king of the quotes channel")
     public static void kingCommand(SlashCommandInteractionEvent event) {
         InteractionHook hook = event.getHook();
@@ -164,7 +160,7 @@ public class QuotesCommands {
         hook.editOriginalEmbeds(eb.build()).queue();
     }
 
-    @SlashCommandExecutor("error")
+    @SlashCommandName("error")
     @SlashCommandDescription("oh no it broke")
     public static void errorCommand(SlashCommandInteractionEvent event) {
         InteractionHook hook = event.getHook();

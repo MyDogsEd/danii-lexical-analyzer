@@ -3,7 +3,7 @@ package dev.mydogsed.sollexicalanalyzer.commands;
 import dev.mydogsed.sollexicalanalyzer.DLAUtil;
 import dev.mydogsed.sollexicalanalyzer.Main;
 import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommandDescription;
-import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommandExecutor;
+import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommandName;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -29,7 +29,7 @@ public class LexicalCommands {
                 .setTimestamp(new Date().toInstant());
     }
 
-    @SlashCommandExecutor("randomkeyboardsmash")
+    @SlashCommandName("randomkeyboardsmash")
     @SlashCommandDescription("Returns a random one of sol's keyboard smashes")
     public static void randomSmashCommand(SlashCommandInteractionEvent event) {
         InteractionHook hook = event.getHook();
@@ -40,7 +40,7 @@ public class LexicalCommands {
         hook.editOriginalEmbeds(eb.build()).queue();
     }
 
-    @SlashCommandExecutor("lettercount")
+    @SlashCommandName("lettercount")
     @SlashCommandDescription("Returns the percent of the top 10 letters in all of sol's keyboard smashes")
     public static void letterCountCommand(SlashCommandInteractionEvent event) {
         InteractionHook hook = event.getHook();
@@ -66,7 +66,7 @@ public class LexicalCommands {
         hook.editOriginalEmbeds(eb.build()).queue();
     }
 
-    @SlashCommandExecutor("averagelength")
+    @SlashCommandName("averagelength")
     @SlashCommandDescription("Gets the average length of each keyboard smash")
     public static void averageLengthCommand(SlashCommandInteractionEvent event) {
         InteractionHook hook = event.getHook();
@@ -86,7 +86,7 @@ public class LexicalCommands {
         hook.editOriginalEmbeds(eb.build()).queue();
     }
 
-    @SlashCommandExecutor("longest")
+    @SlashCommandName("longest")
     @SlashCommandDescription("Returns the longest single keyboard smash in the channel")
     public static void longestCommand(SlashCommandInteractionEvent event) {
         InteractionHook hook = event.getHook();
@@ -100,7 +100,7 @@ public class LexicalCommands {
         hook.editOriginalEmbeds(eb.build()).queue();
     }
 
-    @SlashCommandExecutor("days")
+    @SlashCommandName("days")
     @SlashCommandDescription("What day do most keyboard smashes take place on?")
     public static void daysCommand(SlashCommandInteractionEvent event) {
         // Command Boilerplate
@@ -137,7 +137,7 @@ public class LexicalCommands {
         hook.editOriginalEmbeds(eb.build()).queue();
     }
 
-    @SlashCommandExecutor("csv")
+    @SlashCommandName("csv")
     @SlashCommandDescription("Upload a CSV file containing the keyboard smashes in the channel")
     public static void csvCommand(SlashCommandInteractionEvent event) {
         InteractionHook hook = event.getHook();
@@ -156,7 +156,7 @@ public class LexicalCommands {
     }
 
     // Counts the number of sol's keyboard smashes
-    @SlashCommandExecutor("number")
+    @SlashCommandName("number")
     @SlashCommandDescription("Count the number of sol's keyboard shmashes")
     public static void numberCommand(SlashCommandInteractionEvent event) {
         InteractionHook hook = event.getHook();

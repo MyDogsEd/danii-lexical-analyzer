@@ -4,7 +4,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.util.Map;
 
 /*
 Represents a slash command contained in a single method.
@@ -14,6 +13,6 @@ How to define a method slash command:
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SlashCommandExecutor {
+public @interface SlashCommandName {
     String value();
 }

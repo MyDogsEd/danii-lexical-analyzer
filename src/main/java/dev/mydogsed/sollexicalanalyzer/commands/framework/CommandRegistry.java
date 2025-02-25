@@ -1,16 +1,11 @@
 package dev.mydogsed.sollexicalanalyzer.commands.framework;
 
 import dev.mydogsed.sollexicalanalyzer.commands.QuotesCommands;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
-import net.dv8tion.jda.api.utils.messages.MessageCreateData;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -46,10 +41,10 @@ public class CommandRegistry {
      */
     public void registerMethods(Class<?> clazz) {
         for (Method method : clazz.getDeclaredMethods()) {
-            if (!method.isAnnotationPresent(SlashCommandExecutor.class)) {
+            if (!method.isAnnotationPresent(SlashCommandName.class)) {
                 continue;
             }
-            SlashCommandExecutor methodAnnotation = method.getAnnotation(SlashCommandExecutor.class);
+            SlashCommandName methodAnnotation = method.getAnnotation(SlashCommandName.class);
             String name = methodAnnotation.value();
 
             String description = "A sol-lexical-analyzer command";

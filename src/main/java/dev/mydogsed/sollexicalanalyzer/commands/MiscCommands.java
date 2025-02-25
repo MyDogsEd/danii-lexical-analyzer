@@ -3,7 +3,7 @@ package dev.mydogsed.sollexicalanalyzer.commands;
 import dev.mydogsed.sollexicalanalyzer.DLAUtil;
 import dev.mydogsed.sollexicalanalyzer.commands.framework.CommandRegistry;
 import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommandDescription;
-import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommandExecutor;
+import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommandName;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;
@@ -23,7 +23,7 @@ import static dev.mydogsed.sollexicalanalyzer.commands.LexicalCommands.basicEmbe
 public class MiscCommands {
 
     // Uploads a file of the message history in that channel
-    @SlashCommandExecutor("history")
+    @SlashCommandName("history")
     @SlashCommandDescription("Upload the channel history in a text file")
     public static void historyFileCommand(SlashCommandInteractionEvent event) {
         InteractionHook hook = event.getHook();
@@ -39,7 +39,7 @@ public class MiscCommands {
         hook.editOriginalAttachments(upload).queue();
     }
 
-    @SlashCommandExecutor("help")
+    @SlashCommandName("help")
     @SlashCommandDescription("Show the help dialog")
     public static void helpCommand(SlashCommandInteractionEvent event) {
         InteractionHook hook = event.getHook();
