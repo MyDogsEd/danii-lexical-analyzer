@@ -16,6 +16,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import net.dv8tion.jda.api.utils.FileUpload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,10 +119,24 @@ public class QuotesCommands implements SlashCommand {
         hook.editOriginalEmbeds(eb.build()).queue();
     }
 
+    @SlashCommandName("random")
+    @SlashCommandDescription("Show a random quote from the quotes-without-context channel")
     public static void randomQuoteCommand(SlashCommandInteractionEvent event) {
         InteractionHook hook = event.getHook();
         event.deferReply().queue();
-        hook.editOriginalEmbeds(randomQuotesEmbed(randomQuote()).build()).queue();
+
+        int rand = new Random().nextInt(0, 25);
+        if (rand == 0) {
+            hook.editOriginalAttachments(
+                    FileUpload.fromData(
+                            Objects.requireNonNull(QuotesCommands.class.getResourceAsStream("/qiqi.png")),
+                            "qiqi.png"
+                    )
+            ).queue();
+        }
+        else {
+            hook.editOriginalEmbeds(randomQuotesEmbed(randomQuote()).build()).queue();
+        }
     }
 
     public static void kingCommand(SlashCommandInteractionEvent event) {
@@ -168,7 +183,7 @@ public class QuotesCommands implements SlashCommand {
         switch(Objects.requireNonNull(event.getSubcommandName())) {
             case "count" -> countCommand(event);
             case "leaderboard" -> leaderboardCommand(event);
-            case "randomquote" -> randomQuoteCommand(event);
+            case "random" -> randomQuoteCommand(event);
             case "king" -> kingCommand(event);
             case "stats" -> statsCommand(event);
         }
@@ -238,7 +253,7 @@ public class QuotesCommands implements SlashCommand {
                 .addSubcommands(
                         new SubcommandData("count", "Shows the number of quotes archived"),
                         new SubcommandData("leaderboard", "Rank members by how many quotes archived."),
-                        new SubcommandData("random", "Show a random wquote"),
+                        new SubcommandData("random", "Show a random quote"),
                         new SubcommandData("king", "King of Quotes"),
                         new SubcommandData("stats", "List user quotes stats")
                                 .addOption(
