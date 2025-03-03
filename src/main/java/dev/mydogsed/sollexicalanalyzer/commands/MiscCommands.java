@@ -14,9 +14,7 @@ import net.dv8tion.jda.api.utils.FileUpload;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 public class MiscCommands {
@@ -27,6 +25,7 @@ public class MiscCommands {
     public static void historyFileCommand(SlashCommandInteractionEvent event) {
         InteractionHook hook = event.getHook();
         event.deferReply().setEphemeral(true).queue();
+        hook.editOriginal("Getting messages. This could take a long time! (Up to 2 minutes)").queue();
         List<Message> messages = getMessages(event.getChannel().asTextChannel());
 
         StringBuilder messageString = new StringBuilder();
@@ -51,6 +50,25 @@ public class MiscCommands {
             eb.addField("/" + commandName, registry.getExecutor(commandName).getData().getDescription(), true);
         }
         hook.editOriginalEmbeds(eb.build()).queue();
+    }
+
+    @SlashCommandName("hello")
+    @SlashCommandDescription("Hello!")
+    public static void helloCommand(SlashCommandInteractionEvent event) {
+        InteractionHook hook = event.getHook();
+        event.deferReply().queue();
+
+        LinkedList<String> scout = new LinkedList<>();
+        InputStream is = Objects.requireNonNull(MiscCommands.class.getResourceAsStream("/scout.txt"));
+        Scanner scan = new Scanner(is);
+        while (scan.hasNextLine()) {
+            scout.add(scan.nextLine());
+        }
+
+        int rand = new Random().nextInt(scout.size());
+
+        hook.editOriginal(scout.get(rand)).queue();
+
     }
 
     public static List<Message> getMessages(TextChannel channel) {

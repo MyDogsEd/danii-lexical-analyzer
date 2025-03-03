@@ -129,8 +129,8 @@ public class QuotesCommands implements SlashCommand {
         if (rand == 0) {
             hook.editOriginalAttachments(
                     FileUpload.fromData(
-                            Objects.requireNonNull(QuotesCommands.class.getResourceAsStream("/qiqi.png")),
-                            "qiqi.png"
+                            Objects.requireNonNull(QuotesCommands.class.getResourceAsStream("/qiqi.jpg")),
+                            "qiqi.jpg"
                     )
             ).queue();
         }
@@ -170,11 +170,12 @@ public class QuotesCommands implements SlashCommand {
             return m.getContentRaw().contains("\"") || // straight quotes
                     m.getContentRaw().contains("“") || // curly starting quote
                     m.getContentRaw().contains("”") || // curly ending quote
-                    m.getContentRaw().contains(">") || // markdown quotes syntax
+                    m.getContentRaw().startsWith(">") || // markdown quotes syntax
                     m.getAttachments().size() == 1 || // Message is an image
                     // is a forwarded message
                     m.getMessageReference() != null &&
-                            m.getMessageReference().getType() == MessageReference.MessageReferenceType.FORWARD;
+                            m.getMessageReference().getType() == MessageReference.MessageReferenceType.FORWARD ||
+                    m.getAuthor().getIdLong() == 555955826880413696L; // epic rpg because its funnie
         }).toList();
     }
 

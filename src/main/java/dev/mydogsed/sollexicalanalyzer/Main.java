@@ -93,9 +93,13 @@ public class Main extends ListenerAdapter {
         // Set timer for pulling a random line as a status
         new Timer().schedule(new TimerTask(){
             public void run(){
+                String smash = DLAUtil.randomSmash().getContentRaw();
+                if (smash.length() > 126) {
+                    smash = smash.substring(0, 126);
+                }
                 jda.getPresence().setPresence(
                         OnlineStatus.ONLINE,
-                        Activity.customStatus(String.format("\"%s\"", DLAUtil.randomSmash().getContentRaw())),
+                        Activity.customStatus(String.format("\"%s\"", smash)),
                         false
                 );
 
@@ -161,12 +165,6 @@ public class Main extends ListenerAdapter {
     public static void registerCommandExecutors(){
 
         // Register simple slash commands
-        commandRegistry.register(new SimpleSlashCommand(
-                "hello",
-                "Sends a hello message!",
-                "Hello!"
-        ));
-
         commandRegistry.register(new SimpleSlashCommand(
                 "invite",
                 "Prints the invite link for the bot to the chanel!",
