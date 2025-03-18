@@ -1,4 +1,4 @@
-package dev.mydogsed.sollexicalanalyzer.commands;
+package dev.mydogsed.sollexicalanalyzer.commands.quotes;
 
 import dev.mydogsed.sollexicalanalyzer.DLAUtil;
 import dev.mydogsed.sollexicalanalyzer.Main;

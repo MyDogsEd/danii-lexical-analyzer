@@ -2,7 +2,7 @@ package dev.mydogsed.sollexicalanalyzer;
 
 import dev.mydogsed.sollexicalanalyzer.commands.AnalyzerCommands;
 import dev.mydogsed.sollexicalanalyzer.commands.MiscCommands;
-import dev.mydogsed.sollexicalanalyzer.commands.QuotesCommands;
+import dev.mydogsed.sollexicalanalyzer.commands.quotes.QuotesCommands;
 import dev.mydogsed.sollexicalanalyzer.commands.framework.MessageCache;
 import dev.mydogsed.sollexicalanalyzer.commands.framework.RegistrySlashCommandListener;
 import dev.mydogsed.sollexicalanalyzer.commands.framework.CommandRegistry;
