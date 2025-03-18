@@ -4,6 +4,7 @@ import dev.mydogsed.sollexicalanalyzer.DLAUtil;
 import dev.mydogsed.sollexicalanalyzer.commands.framework.CommandRegistry;
 import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommandDescription;
 import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommandName;
+import dev.mydogsed.sollexicalanalyzer.commands.quotes.QuotesCommands;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;
