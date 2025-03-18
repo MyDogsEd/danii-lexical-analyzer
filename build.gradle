@@ -17,7 +17,12 @@ dependencies {
 
     // JDA
     implementation("net.dv8tion:JDA:5.2.2")
+
+    // Logback for logging
     implementation("ch.qos.logback:logback-classic:1.5.16")
+
+    // MapDB for easy database stuffs
+    implementation('org.mapdb:mapdb:3.1.0')
 
     // Mockito for mocking JDA
     testImplementation("org.mockito:mockito-core:4.11.0")

@@ -33,7 +33,7 @@ public class MessageCache {
         List<Message> messages = new LinkedList<>();
         MessageHistory messageHistory = textChannel.getHistory();
         while(true){
-            List<Message> history = messageHistory.retrievePast(100).complete();
+                    List<Message> history = messageHistory.retrievePast(100).complete();
             messages.addAll(history);
             if (history.size() < 100){
                 break;
