@@ -7,6 +7,7 @@ import dev.mydogsed.sollexicalanalyzer.commands.framework.MessageCache;
 import dev.mydogsed.sollexicalanalyzer.commands.framework.RegistrySlashCommandListener;
 import dev.mydogsed.sollexicalanalyzer.commands.framework.CommandRegistry;
 import dev.mydogsed.sollexicalanalyzer.commands.framework.SimpleSlashCommand;
+import dev.mydogsed.sollexicalanalyzer.commands.quotes.util.QuotesV2;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.JDAInfo;
@@ -46,7 +47,7 @@ public class Main extends ListenerAdapter {
         try {
             jda = JDABuilder.createDefault(getApiKey())
                     .addEventListeners(new Main())
-                    .enableIntents(GatewayIntent.MESSAGE_CONTENT)
+                    .enableIntents(EnumSet.allOf(GatewayIntent.class))
                     .setActivity(Activity.customStatus("starting..."))
                     .setStatus(OnlineStatus.DO_NOT_DISTURB)
                     .build();
@@ -85,6 +86,7 @@ public class Main extends ListenerAdapter {
 
         // TODO: move this to a command or something, this really should only be done once, not every time the bot logs in
         // MessageCache has to come first, before we attach command executors
+
         createMessageCache();
         registerCommandExecutors();
         registerSlashCommands();
@@ -179,6 +181,7 @@ public class Main extends ListenerAdapter {
         // Register Classes that implement SlashCommand
         commandRegistry.register(new AnalyzerCommands());
         commandRegistry.register(new QuotesCommands());
+        commandRegistry.register(new QuotesV2());
 
         // Log that command executors have been registered
         logger.info("Registered Command Executors");

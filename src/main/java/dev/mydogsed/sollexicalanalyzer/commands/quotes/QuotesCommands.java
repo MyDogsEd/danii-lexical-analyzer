@@ -47,7 +47,7 @@ public class QuotesCommands implements SlashCommand {
                 .setTimestamp(quote.getTimeCreated());
 
         // Is this a forwarded message?
-        if (DLAUtil.isForwarded(quote)) {
+        if (quote.getMessageReference() != null && quote.getMessageReference().getType() == MessageReference.MessageReferenceType.FORWARD) {
 
             // does the snapshot have an attachment?
             if (!quote.getMessageSnapshots().get(0).getAttachments().isEmpty()) {
