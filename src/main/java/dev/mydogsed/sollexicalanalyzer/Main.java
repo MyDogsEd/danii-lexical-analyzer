@@ -95,7 +95,7 @@ public class Main extends ListenerAdapter {
         // Set timer for pulling a random line as a status
         new Timer().schedule(new TimerTask(){
             public void run(){
-                String smash = DLAUtil.randomSmash().getContentRaw();
+                String smash = Util.randomSmash().getContentRaw();
                 if (smash.length() > 126) {
                     smash = smash.substring(0, 126);
                 }

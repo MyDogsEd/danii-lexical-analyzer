@@ -22,7 +22,12 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.5.16")
 
     // Hibernate for database
-    implementation('org.hibernate.orm:hibernate-core:6.6.11.Final')
+    implementation platform("org.hibernate.orm:hibernate-platform:6.6.11.Final")
+    implementation('org.hibernate.orm:hibernate-core')
+    implementation("jakarta.transaction:jakarta.transaction-api")
+
+    // sqlite jdbc driver
+    implementation('org.xerial:sqlite-jdbc:3.49.1.0')
 
     // Mockito for mocking JDA
     testImplementation("org.mockito:mockito-core:4.11.0")

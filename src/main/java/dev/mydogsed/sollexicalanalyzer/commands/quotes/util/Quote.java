@@ -1,6 +1,6 @@
 package dev.mydogsed.sollexicalanalyzer.commands.quotes.util;
 
-import dev.mydogsed.sollexicalanalyzer.DLAUtil;
+import dev.mydogsed.sollexicalanalyzer.Util;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
@@ -60,25 +60,25 @@ public class Quote {
         this.authorName = message.getAuthor().getEffectiveName();
         this.authorAvatarURL = message.getAuthor().getAvatarUrl();
 
-        if (DLAUtil.isTextQuote(message)) {
+        if (Util.isTextQuote(message)) {
             this.contentRaw = message.getContentRaw();
             this.contentDisplay = message.getContentDisplay();
             this.isTextQuote = true;
         }
 
-        else if (DLAUtil.isForwardedTextQuote(message)) {
+        else if (Util.isForwardedTextQuote(message)) {
             this.contentRaw = message.getMessageSnapshots().get(0).getContentRaw();
             // MessageSnapshot does not have an m.getContentDisplay() method
             this.contentDisplay = message.getMessageSnapshots().get(0).getContentRaw();
             this.isTextQuote = true;
         }
 
-        else if (DLAUtil.isImageQuote(message)) {
+        else if (Util.isImageQuote(message)) {
             this.imageURL = message.getAttachments().get(0).getUrl();
             this.isTextQuote = false;
         }
 
-        else if (DLAUtil.isForwardedImageQuote(message)) {
+        else if (Util.isForwardedImageQuote(message)) {
             this.imageURL = message.getMessageSnapshots().get(0).getAttachments().get(0).getUrl();
             this.isTextQuote = false;
         }
@@ -92,10 +92,6 @@ public class Quote {
 
     public boolean isTextQuote() {
         return isTextQuote;
-    }
-
-    public boolean isImageQuote() {
-        return !isTextQuote;
     }
 
     public String getContentRaw() {

@@ -1,6 +1,6 @@
 package dev.mydogsed.sollexicalanalyzer.commands;
 
-import dev.mydogsed.sollexicalanalyzer.DLAUtil;
+import dev.mydogsed.sollexicalanalyzer.Util;
 import dev.mydogsed.sollexicalanalyzer.Main;
 import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommand;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -66,9 +66,9 @@ public class AnalyzerCommands implements SlashCommand {
         InteractionHook hook = event.getHook();
         event.deferReply().queue();
 
-        Message random = DLAUtil.randomSmash();
+        Message random = Util.randomSmash();
         EmbedBuilder eb = analyzerEmbed("Random Keyboard Smash")
-                .addField(DLAUtil.getMessageContentRaw(random), random.getJumpUrl(), false);
+                .addField(Util.getMessageContentRaw(random), random.getJumpUrl(), false);
         hook.editOriginalEmbeds(eb.build()).queue();
     }
 
@@ -105,7 +105,7 @@ public class AnalyzerCommands implements SlashCommand {
 
         int sum = 0;
         for (Message message : messages) {
-            sum += DLAUtil.getMessageContentRaw(message).length();
+            sum += Util.getMessageContentRaw(message).length();
         }
         double avg = (double) sum / (double) messages.size();
 
@@ -123,8 +123,8 @@ public class AnalyzerCommands implements SlashCommand {
         messages.sort(Comparator.comparing(message -> message.getContentRaw().length()));
         Message longestMessage = messages.get(messages.size() - 1);
         EmbedBuilder eb = analyzerEmbed("Longest")
-                .setDescription("The longest single keyboard smash is " + DLAUtil.getMessageContentRaw(longestMessage).length() + " characters")
-                .addField(DLAUtil.getMessageContentRaw(longestMessage), longestMessage.getJumpUrl(), false);
+                .setDescription("The longest single keyboard smash is " + Util.getMessageContentRaw(longestMessage).length() + " characters")
+                .addField(Util.getMessageContentRaw(longestMessage), longestMessage.getJumpUrl(), false);
         hook.editOriginalEmbeds(eb.build()).queue();
     }
 
@@ -172,7 +172,7 @@ public class AnalyzerCommands implements SlashCommand {
 
         StringBuilder csv = new StringBuilder();
         for (Message message : smashes) {
-            csv.append(String.format("%s, %tc%n", DLAUtil.getMessageContentRaw(message), message.getTimeCreated()));
+            csv.append(String.format("%s, %tc%n", Util.getMessageContentRaw(message), message.getTimeCreated()));
         }
 
         InputStream stream = new ByteArrayInputStream(csv.toString().getBytes());
@@ -201,7 +201,7 @@ public class AnalyzerCommands implements SlashCommand {
         // Get the messages in the channel and write all of them into one string
         StringBuilder letters = new StringBuilder();
         for (Message message : messages) {
-            letters.append(DLAUtil.getMessageContentSanitized(message).toLowerCase());
+            letters.append(Util.getMessageContentSanitized(message).toLowerCase());
         }
 
         // Get a character array from the string and sort it

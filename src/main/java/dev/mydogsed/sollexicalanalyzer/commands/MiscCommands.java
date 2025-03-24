@@ -1,6 +1,6 @@
 package dev.mydogsed.sollexicalanalyzer.commands;
 
-import dev.mydogsed.sollexicalanalyzer.DLAUtil;
+import dev.mydogsed.sollexicalanalyzer.Util;
 import dev.mydogsed.sollexicalanalyzer.commands.framework.CommandRegistry;
 import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommandDescription;
 import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommandName;
@@ -31,7 +31,7 @@ public class MiscCommands {
 
         StringBuilder messageString = new StringBuilder();
         for (Message message : messages) {
-            messageString.append(String.format("[%tc] %s: %s%n", message.getTimeCreated(), message.getAuthor().getEffectiveName(), DLAUtil.getMessageContentRaw(message)));
+            messageString.append(String.format("[%tc] %s: %s%n", message.getTimeCreated(), message.getAuthor().getEffectiveName(), Util.getMessageContentRaw(message)));
         }
         InputStream stream = new ByteArrayInputStream(messageString.toString().getBytes());
         FileUpload upload = FileUpload.fromData(stream, "channel_messages.txt");

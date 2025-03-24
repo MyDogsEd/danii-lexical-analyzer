@@ -7,7 +7,7 @@ import net.dv8tion.jda.api.utils.MarkdownSanitizer;
 import java.util.List;
 import java.util.Random;
 
-public class DLAUtil {
+public class Util {
 
     // get message content raw, including forwarded messages
     public static String getMessageContentRaw(Message message){

@@ -1,6 +1,6 @@
 package dev.mydogsed.sollexicalanalyzer.commands.quotes.util;
 
-import dev.mydogsed.sollexicalanalyzer.DLAUtil;
+import dev.mydogsed.sollexicalanalyzer.Util;
 import dev.mydogsed.sollexicalanalyzer.Main;
 import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommand;
 import dev.mydogsed.sollexicalanalyzer.commands.quotes.QuotesCommands;
@@ -126,11 +126,11 @@ public class QuotesV2 implements SlashCommand {
         hook.editOriginal("Migrating. This might take a while.").queue();
         registry = new QuoteRegistry();
 
-        List<Message> messages = Main.quotesCache.getMessages().stream().filter(DLAUtil::isQuote).toList();
+        List<Message> messages = Main.quotesCache.getMessages().stream().filter(Util::isQuote).toList();
 
         AtomicInteger i = new AtomicInteger(1);
         for(Message m : messages){
-            if (DLAUtil.isQuote(m)){
+            if (Util.isQuote(m)){
                 registry.addQuote(m);
             }
             System.out.print("Migrating " + i + "/" + messages.size() + "\r");

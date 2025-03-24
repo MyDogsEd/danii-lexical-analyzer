@@ -1,11 +1,10 @@
 package dev.mydogsed.sollexicalanalyzer.commands.quotes.util;
 
-import dev.mydogsed.sollexicalanalyzer.DLAUtil;
+import dev.mydogsed.sollexicalanalyzer.Util;
 import net.dv8tion.jda.api.entities.Message;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 public class QuoteRegistry {
 
@@ -16,7 +15,7 @@ public class QuoteRegistry {
     }
 
     public void addQuote(Message m){
-        if (DLAUtil.isQuote(m)){
+        if (Util.isQuote(m)){
             map.put(m.getIdLong(), new Quote(m));
         } else {
             LoggerFactory.getLogger(QuoteRegistry.class).info("Not a quote: {}: {}", m.getAuthor().getEffectiveName(), m.getContentDisplay());
