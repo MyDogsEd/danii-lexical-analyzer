@@ -21,8 +21,8 @@ dependencies {
     // Logback for logging
     implementation("ch.qos.logback:logback-classic:1.5.16")
 
-    // MapDB for easy database stuffs
-    implementation('org.mapdb:mapdb:3.1.0')
+    // Hibernate for database
+    implementation('org.hibernate.orm:hibernate-core:6.6.11.Final')
 
     // Mockito for mocking JDA
     testImplementation("org.mockito:mockito-core:4.11.0")
