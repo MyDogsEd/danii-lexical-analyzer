@@ -28,6 +28,8 @@ import java.io.FileNotFoundException;
 import java.nio.file.Paths;
 import java.util.*;
 
+import static dev.mydogsed.sollexicalanalyzer.Util.getApiKey;
+
 public class Main extends ListenerAdapter {
 
     public static JDA jda;
@@ -69,13 +71,6 @@ public class Main extends ListenerAdapter {
         // The bot has already started at this point, so all code is handled by events
     }
 
-    // Utility method to get the API key from the file present in the same directory
-    public static String getApiKey() throws FileNotFoundException {
-        File file = new File("./BOT_KEY.apikey");
-        Scanner scanner = new Scanner(file);
-        return scanner.next();
-    }
-
     // Register all commands and things after the bot is logged in and ready for us to do so
     @Override
     public void onReady(@NotNull ReadyEvent event) {
@@ -111,7 +106,8 @@ public class Main extends ListenerAdapter {
         logger.info ("Startup took {} s", (System.currentTimeMillis() - startTime) / 1000);
     }
 
-    private void createMessageCache() {
+    // Create the quotes and messages caches
+    private static void createMessageCache() {
 
         logger.info("Creating the quotes cache...");
         long startTime = System.currentTimeMillis();
@@ -129,10 +125,8 @@ public class Main extends ListenerAdapter {
         logger.info("All message caches created!");
     }
 
-    // Register the slash commands to discord
+    // Register the slash commands to discord (does NOT register executors)
     public static void registerSlashCommands(){
-        //Main.jda.updateCommands()
-        // Hardcoded id for fruity factory and testing guild
         // MyDogsBot guild: 734502410952769607
         // Fruity Factory: 1233092684198182943
         // GDC: 612467012018634753
@@ -146,8 +140,6 @@ public class Main extends ListenerAdapter {
             logger.error("Guilds not found for registering slash commands!");
         }
         logger.info("Registered Slash Commands");
-
-
     }
 
     // For the given guild, register all commands in the command registry as slash commands for that guild
@@ -187,6 +179,7 @@ public class Main extends ListenerAdapter {
         logger.info("Registered Command Executors");
     }
 
+    // Register listeners -- registered executors will do nothing if this listener isn't registered
     public static void registerListeners(){
         Main.jda.addEventListener(new RegistrySlashCommandListener());
         logger.info("Registered Event Listeners");
