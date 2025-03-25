@@ -1,4 +1,4 @@
-package dev.mydogsed.sollexicalanalyzer.commands.framework;
+package dev.mydogsed.sollexicalanalyzer.framework;
 
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;

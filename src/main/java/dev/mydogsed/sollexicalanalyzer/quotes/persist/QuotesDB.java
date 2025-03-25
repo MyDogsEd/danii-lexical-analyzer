@@ -1,6 +1,8 @@
-package dev.mydogsed.sollexicalanalyzer.commands.quotes.persist;
+package dev.mydogsed.sollexicalanalyzer.quotes.persist;
 
 import dev.mydogsed.sollexicalanalyzer.Util;
+import dev.mydogsed.sollexicalanalyzer.quotes.persist.models.Quote;
+import dev.mydogsed.sollexicalanalyzer.quotes.persist.models.QuoteAuthor;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;

@@ -1,4 +1,4 @@
-package dev.mydogsed.sollexicalanalyzer.commands.quotes.persist;
+package dev.mydogsed.sollexicalanalyzer.quotes.persist.models;
 
 import jakarta.persistence.*;
 import net.dv8tion.jda.api.entities.User;

@@ -1,11 +1,14 @@
 package dev.mydogsed.sollexicalanalyzer;
 
-import dev.mydogsed.sollexicalanalyzer.commands.AnalyzerCommands;
-import dev.mydogsed.sollexicalanalyzer.commands.MiscCommands;
-import dev.mydogsed.sollexicalanalyzer.commands.framework.*;
-import dev.mydogsed.sollexicalanalyzer.commands.quotes.QuotesCommands;
-import dev.mydogsed.sollexicalanalyzer.commands.quotes.persist.QuotesDBListener;
-import dev.mydogsed.sollexicalanalyzer.commands.quotes.persist.SessionFactoryManager;
+import dev.mydogsed.sollexicalanalyzer.misc.AnalyzerCommands;
+import dev.mydogsed.sollexicalanalyzer.misc.MiscCommands;
+import dev.mydogsed.sollexicalanalyzer.framework.CommandRegistry;
+import dev.mydogsed.sollexicalanalyzer.framework.MessageCache;
+import dev.mydogsed.sollexicalanalyzer.framework.RegistrySlashCommandListener;
+import dev.mydogsed.sollexicalanalyzer.framework.SimpleSlashCommand;
+import dev.mydogsed.sollexicalanalyzer.quotes.QuotesCommands;
+import dev.mydogsed.sollexicalanalyzer.quotes.persist.QuotesDBListener;
+import dev.mydogsed.sollexicalanalyzer.quotes.persist.SessionFactoryManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.JDAInfo;

@@ -1,10 +1,10 @@
-package dev.mydogsed.sollexicalanalyzer.commands;
+package dev.mydogsed.sollexicalanalyzer.misc;
 
 import dev.mydogsed.sollexicalanalyzer.Util;
-import dev.mydogsed.sollexicalanalyzer.commands.framework.CommandRegistry;
-import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommandDescription;
-import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommandName;
-import dev.mydogsed.sollexicalanalyzer.commands.quotes.QuotesCommands;
+import dev.mydogsed.sollexicalanalyzer.framework.CommandRegistry;
+import dev.mydogsed.sollexicalanalyzer.framework.SlashCommandDescription;
+import dev.mydogsed.sollexicalanalyzer.framework.SlashCommandName;
+import dev.mydogsed.sollexicalanalyzer.quotes.QuotesCommands;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;

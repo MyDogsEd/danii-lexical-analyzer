@@ -1,4 +1,4 @@
-package dev.mydogsed.sollexicalanalyzer.commands.framework;
+package dev.mydogsed.sollexicalanalyzer.framework;
 
 import dev.mydogsed.sollexicalanalyzer.Main;
 import net.dv8tion.jda.api.entities.Message;

@@ -1,4 +1,4 @@
-package dev.mydogsed.sollexicalanalyzer.commands.quotes.persist;
+package dev.mydogsed.sollexicalanalyzer.quotes.persist.models;
 
 import dev.mydogsed.sollexicalanalyzer.Util;
 import jakarta.persistence.Entity;

@@ -6,7 +6,7 @@
         </encoder>
     </appender>
 
-    <logger name="dev.mydogsed.sollexicalanalyzer.commands.quotes.persist" level="DEBUG"/>
+    <logger name="dev.mydogsed.sollexicalanalyzer.misc.quotes.persist" level="DEBUG"/>
 
     <root level="info">
         <appender-ref ref="STDOUT" />

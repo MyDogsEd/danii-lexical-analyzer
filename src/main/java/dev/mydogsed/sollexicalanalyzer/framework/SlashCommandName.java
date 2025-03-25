@@ -1,4 +1,4 @@
-package dev.mydogsed.sollexicalanalyzer.commands.framework;
+package dev.mydogsed.sollexicalanalyzer.framework;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

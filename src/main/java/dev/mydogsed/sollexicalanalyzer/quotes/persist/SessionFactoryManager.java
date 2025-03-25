@@ -1,5 +1,7 @@
-package dev.mydogsed.sollexicalanalyzer.commands.quotes.persist;
+package dev.mydogsed.sollexicalanalyzer.quotes.persist;
 
+import dev.mydogsed.sollexicalanalyzer.quotes.persist.models.Quote;
+import dev.mydogsed.sollexicalanalyzer.quotes.persist.models.QuoteAuthor;
 import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.hibernate.SessionFactory;
