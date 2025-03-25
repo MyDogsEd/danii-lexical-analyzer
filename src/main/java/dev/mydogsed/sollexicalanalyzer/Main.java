@@ -4,7 +4,7 @@ import dev.mydogsed.sollexicalanalyzer.commands.AnalyzerCommands;
 import dev.mydogsed.sollexicalanalyzer.commands.MiscCommands;
 import dev.mydogsed.sollexicalanalyzer.commands.framework.*;
 import dev.mydogsed.sollexicalanalyzer.commands.quotes.QuotesV2;
-import dev.mydogsed.sollexicalanalyzer.commands.quotes.persist.QuoteDBListener;
+import dev.mydogsed.sollexicalanalyzer.commands.quotes.persist.QuotesDBListener;
 import dev.mydogsed.sollexicalanalyzer.commands.quotes.persist.SessionFactoryManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -183,7 +183,7 @@ public class Main extends ListenerAdapter {
         jda.addEventListener(new SessionFactoryManager());
 
         // Event listener for the quote db updates
-        jda.addEventListener(new QuoteDBListener());
+        jda.addEventListener(new QuotesDBListener());
 
         logger.info("Registered Event Listeners");
     }

@@ -1,18 +1,11 @@
 package dev.mydogsed.sollexicalanalyzer.commands.quotes;
 
 import dev.mydogsed.sollexicalanalyzer.Main;
-import dev.mydogsed.sollexicalanalyzer.Util;
 import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommand;
-import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommandDescription;
-import dev.mydogsed.sollexicalanalyzer.commands.framework.SlashCommandName;
 import dev.mydogsed.sollexicalanalyzer.commands.quotes.persist.Quote;
 import dev.mydogsed.sollexicalanalyzer.commands.quotes.persist.QuoteAuthor;
-import dev.mydogsed.sollexicalanalyzer.commands.quotes.persist.QuoteDBManager;
-import dev.mydogsed.sollexicalanalyzer.commands.quotes.persist.SessionFactoryManager;
+import dev.mydogsed.sollexicalanalyzer.commands.quotes.persist.QuotesDB;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.ISnowflake;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageReference;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
@@ -21,14 +14,11 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.utils.FileUpload;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.time.Instant;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 
@@ -67,7 +57,7 @@ public class QuotesV2 implements SlashCommand {
         InteractionHook hook = event.getHook();
         event.deferReply().queue();
 
-        int size = QuoteDBManager.getQuotes().size();
+        int size = QuotesDB.getQuotes().size();
 
         hook.editOriginalEmbeds(
                 quotesEmbed("Number of Quotes")
@@ -80,9 +70,9 @@ public class QuotesV2 implements SlashCommand {
         InteractionHook hook = event.getHook();
         event.deferReply().queue();
 
-        List<QuoteAuthor> authors = QuoteDBManager.getQuoteAuthors();
+        List<QuoteAuthor> authors = QuotesDB.getQuoteAuthors();
 
-        int quotesSize = QuoteDBManager.getQuotes().size();
+        int quotesSize = QuotesDB.getQuotes().size();
 
         authors.sort(
                 Comparator.comparingInt((QuoteAuthor o) -> o.getQuotes().size()).reversed()
@@ -112,11 +102,11 @@ public class QuotesV2 implements SlashCommand {
 
         if (event.getOption("user") != null) {
             User user = event.getOption("user").getAsUser();
-            quotes = QuoteDBManager.getQuoteAuthor(user.getIdLong()).getQuotes();
+            quotes = QuotesDB.getQuoteAuthor(user.getIdLong()).getQuotes();
         }
 
         else {
-            quotes = QuoteDBManager.getQuotes();
+            quotes = QuotesDB.getQuotes();
         }
 
         Quote randomQuote = quotes.get(new Random().nextInt(quotes.size()));
@@ -148,7 +138,7 @@ public class QuotesV2 implements SlashCommand {
         hook.editOriginal("Updating database. This could take up to 3 minutes.").queue();
 
         Thread thread = new Thread(() -> {
-            QuoteDBManager.doMessageSync(event.getJDA());
+            QuotesDB.doMessageSync(event.getJDA());
             hook.editOriginal("Database updated").queue();
         }, "Quotes-Database-Sync-Thread");
         thread.start();

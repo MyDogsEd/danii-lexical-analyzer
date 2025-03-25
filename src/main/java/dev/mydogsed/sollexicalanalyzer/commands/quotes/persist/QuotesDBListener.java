@@ -9,14 +9,14 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class QuoteDBListener extends ListenerAdapter {
-    private static final Logger log = LoggerFactory.getLogger(QuoteDBListener.class);
+public class QuotesDBListener extends ListenerAdapter {
+    private static final Logger log = LoggerFactory.getLogger(QuotesDBListener.class);
 
     // Check if message is a quote, add it to the database if it is a quote
     public void onMessageReceived(MessageReceivedEvent event) {
 
         // Check that message is in the quotes channel
-        if (event.getChannel().getIdLong() != QuoteDBManager.QUOTE_CHANNEL) {
+        if (event.getChannel().getIdLong() != QuotesDB.QUOTE_CHANNEL) {
             log.debug("Message received not in quotes channel");
             return;
         }
@@ -28,23 +28,23 @@ public class QuoteDBListener extends ListenerAdapter {
         if (!Util.isQuote(message)) {return;}
 
         // Add it to the database
-        QuoteDBManager.addOrUpdateQuote(message);
+        QuotesDB.addOrUpdateQuote(message);
     }
 
     //
     public void onMessageUpdate(MessageUpdateEvent event) {
-        if (event.getChannel().getIdLong() != QuoteDBManager.QUOTE_CHANNEL) return;
+        if (event.getChannel().getIdLong() != QuotesDB.QUOTE_CHANNEL) return;
 
-        if (!QuoteDBManager.quoteExists(event.getMessageIdLong())) return;
+        if (!QuotesDB.quoteExists(event.getMessageIdLong())) return;
 
         Message message = event.getMessage();
-        QuoteDBManager.addOrUpdateQuote(message);
+        QuotesDB.addOrUpdateQuote(message);
     }
 
     public void onMessageDelete(MessageDeleteEvent event) {
-        if (event.getChannel().getIdLong() != QuoteDBManager.QUOTE_CHANNEL) return;
-        if (!QuoteDBManager.quoteExists(event.getMessageIdLong())) return;
+        if (event.getChannel().getIdLong() != QuotesDB.QUOTE_CHANNEL) return;
+        if (!QuotesDB.quoteExists(event.getMessageIdLong())) return;
 
-        QuoteDBManager.removeQuote(event.getMessageIdLong());
+        QuotesDB.removeQuote(event.getMessageIdLong());
     }
 }

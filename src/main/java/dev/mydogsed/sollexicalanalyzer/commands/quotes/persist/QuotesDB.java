@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.util.LinkedList;
 import java.util.List;
 
-public class QuoteDBManager extends ListenerAdapter {
+public class QuotesDB extends ListenerAdapter {
 
     // ID For the quote channel
     public static final Long QUOTE_CHANNEL = 1233098767658520668L;
@@ -23,7 +23,7 @@ public class QuoteDBManager extends ListenerAdapter {
     public static final Long FRUITY_FACTORY = 1233092684198182943L;
 
     // Logging
-    private static final Logger log = LoggerFactory.getLogger(QuoteDBManager.class);
+    private static final Logger log = LoggerFactory.getLogger(QuotesDB.class);
 
     // Sync all messages in the quotes channel with the database
     public static void doMessageSync(JDA jda) {
