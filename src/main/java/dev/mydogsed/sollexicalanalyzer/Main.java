@@ -3,8 +3,8 @@ package dev.mydogsed.sollexicalanalyzer;
 import dev.mydogsed.sollexicalanalyzer.commands.AnalyzerCommands;
 import dev.mydogsed.sollexicalanalyzer.commands.MiscCommands;
 import dev.mydogsed.sollexicalanalyzer.commands.framework.*;
-import dev.mydogsed.sollexicalanalyzer.commands.quotes.QuotesCommands;
 import dev.mydogsed.sollexicalanalyzer.commands.quotes.QuotesV2;
+import dev.mydogsed.sollexicalanalyzer.commands.quotes.persist.QuoteDBListener;
 import dev.mydogsed.sollexicalanalyzer.commands.quotes.persist.SessionFactoryManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -106,14 +106,14 @@ public class Main extends ListenerAdapter {
     // Create the quotes and messages caches
     private static void createMessageCache() {
 
-        logger.info("Creating the quotes cache...");
-        long startTime = System.currentTimeMillis();
-        // Create the quotes cache
-        quotesCache = new MessageCache(Objects.requireNonNull(jda.getTextChannelById(1233098767658520668L)));
-        logger.info("quotes cache took {}s", (System.currentTimeMillis() - startTime) / 1000);
+//        logger.info("Creating the quotes cache...");
+//        long startTime = System.currentTimeMillis();
+//        // Create the quotes cache
+//        quotesCache = new MessageCache(Objects.requireNonNull(jda.getTextChannelById(1233098767658520668L)));
+//        logger.info("quotes cache took {}s", (System.currentTimeMillis() - startTime) / 1000);
 
         logger.info("Creating the smashes cache...");
-        startTime = System.currentTimeMillis();
+        long startTime = System.currentTimeMillis();
         // Create the smashes cache
         smashesCache = new MessageCache(Objects.requireNonNull(jda.getTextChannelById(1293961375273451615L)));
         logger.info("smashes cache took {}s", (System.currentTimeMillis() - startTime) / 1000);
@@ -165,11 +165,9 @@ public class Main extends ListenerAdapter {
 
         // Register classes that use the @SlashCommand decorators
         commandRegistry.registerMethods(MiscCommands.class);
-        commandRegistry.registerMethods(QuotesCommands.class);
 
         // Register Classes that implement SlashCommand
         commandRegistry.register(new AnalyzerCommands());
-        commandRegistry.register(new QuotesCommands());
         commandRegistry.register(new QuotesV2());
 
         // Log that command executors have been registered
@@ -183,6 +181,9 @@ public class Main extends ListenerAdapter {
 
         // Event listener to shut down SessionFactory
         jda.addEventListener(new SessionFactoryManager());
+
+        // Event listener for the quote db updates
+        jda.addEventListener(new QuoteDBListener());
 
         logger.info("Registered Event Listeners");
     }
