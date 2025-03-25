@@ -4,6 +4,7 @@ import dev.mydogsed.sollexicalanalyzer.commands.AnalyzerCommands;
 import dev.mydogsed.sollexicalanalyzer.commands.MiscCommands;
 import dev.mydogsed.sollexicalanalyzer.commands.framework.*;
 import dev.mydogsed.sollexicalanalyzer.commands.quotes.QuotesCommands;
+import dev.mydogsed.sollexicalanalyzer.commands.quotes.QuotesDB;
 import dev.mydogsed.sollexicalanalyzer.commands.quotes.persist.Quote;
 import dev.mydogsed.sollexicalanalyzer.commands.quotes.persist.QuoteAuthor;
 import dev.mydogsed.sollexicalanalyzer.commands.quotes.persist.SessionFactoryManager;
@@ -173,6 +174,7 @@ public class Main extends ListenerAdapter {
         // Register Classes that implement SlashCommand
         commandRegistry.register(new AnalyzerCommands());
         commandRegistry.register(new QuotesCommands());
+        commandRegistry.register(new QuotesDB());
 
         // Log that command executors have been registered
         logger.info("Registered Command Executors");

@@ -76,6 +76,8 @@ public class QuotesDB implements SlashCommand {
                 // persist the updated author object
                 session.persist(author);
             }
+
+            t.commit();
         }
 
         catch (Exception e) {

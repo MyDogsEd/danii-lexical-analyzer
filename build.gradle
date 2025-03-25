@@ -24,6 +24,7 @@ dependencies {
     // Hibernate for database
     implementation platform("org.hibernate.orm:hibernate-platform:6.6.11.Final")
     implementation('org.hibernate.orm:hibernate-core')
+    implementation('org.hibernate.orm:hibernate-community-dialects')
     implementation("jakarta.transaction:jakarta.transaction-api")
 
     // sqlite jdbc driver
