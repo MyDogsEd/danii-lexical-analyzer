@@ -2,12 +2,11 @@ package dev.mydogsed.sollexicalanalyzer;
 
 import dev.mydogsed.sollexicalanalyzer.commands.AnalyzerCommands;
 import dev.mydogsed.sollexicalanalyzer.commands.MiscCommands;
+import dev.mydogsed.sollexicalanalyzer.commands.framework.*;
 import dev.mydogsed.sollexicalanalyzer.commands.quotes.QuotesCommands;
-import dev.mydogsed.sollexicalanalyzer.commands.framework.MessageCache;
-import dev.mydogsed.sollexicalanalyzer.commands.framework.RegistrySlashCommandListener;
-import dev.mydogsed.sollexicalanalyzer.commands.framework.CommandRegistry;
-import dev.mydogsed.sollexicalanalyzer.commands.framework.SimpleSlashCommand;
-import dev.mydogsed.sollexicalanalyzer.commands.quotes.util.QuotesV2;
+import dev.mydogsed.sollexicalanalyzer.commands.quotes.persist.Quote;
+import dev.mydogsed.sollexicalanalyzer.commands.quotes.persist.QuoteAuthor;
+import dev.mydogsed.sollexicalanalyzer.commands.quotes.persist.SessionFactoryManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.JDAInfo;
@@ -19,11 +18,12 @@ import net.dv8tion.jda.api.exceptions.InvalidTokenException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Paths;
 import java.util.*;
@@ -34,7 +34,7 @@ public class Main extends ListenerAdapter {
 
     public static JDA jda;
 
-    public static Logger logger = LoggerFactory.getLogger(Main.class);
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static CommandRegistry commandRegistry = CommandRegistry.getInstance();
 
@@ -89,7 +89,7 @@ public class Main extends ListenerAdapter {
 
         // Set timer for pulling a random line as a status
         new Timer().schedule(new TimerTask(){
-            public void run(){
+            public void run() {
                 String smash = Util.randomSmash().getContentRaw();
                 if (smash.length() > 126) {
                     smash = smash.substring(0, 126);
@@ -173,7 +173,6 @@ public class Main extends ListenerAdapter {
         // Register Classes that implement SlashCommand
         commandRegistry.register(new AnalyzerCommands());
         commandRegistry.register(new QuotesCommands());
-        commandRegistry.register(new QuotesV2());
 
         // Log that command executors have been registered
         logger.info("Registered Command Executors");
@@ -181,7 +180,12 @@ public class Main extends ListenerAdapter {
 
     // Register listeners -- registered executors will do nothing if this listener isn't registered
     public static void registerListeners(){
-        Main.jda.addEventListener(new RegistrySlashCommandListener());
+        // Event listener for the command registry
+        jda.addEventListener(new RegistrySlashCommandListener());
+
+        // Event listener to shut down SessionFactory
+        jda.addEventListener(new SessionFactoryManager());
+
         logger.info("Registered Event Listeners");
     }
 }
