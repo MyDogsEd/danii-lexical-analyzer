@@ -15,7 +15,7 @@ public class QuoteAuthor {
     private String userName;
     private String avatarURL;
 
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Quote> quotes = new ArrayList<>();
 
 
