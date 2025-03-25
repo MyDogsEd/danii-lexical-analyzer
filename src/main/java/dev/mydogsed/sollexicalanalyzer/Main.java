@@ -3,7 +3,7 @@ package dev.mydogsed.sollexicalanalyzer;
 import dev.mydogsed.sollexicalanalyzer.commands.AnalyzerCommands;
 import dev.mydogsed.sollexicalanalyzer.commands.MiscCommands;
 import dev.mydogsed.sollexicalanalyzer.commands.framework.*;
-import dev.mydogsed.sollexicalanalyzer.commands.quotes.QuotesV2;
+import dev.mydogsed.sollexicalanalyzer.commands.quotes.QuotesCommands;
 import dev.mydogsed.sollexicalanalyzer.commands.quotes.persist.QuotesDBListener;
 import dev.mydogsed.sollexicalanalyzer.commands.quotes.persist.SessionFactoryManager;
 import net.dv8tion.jda.api.JDA;
@@ -168,7 +168,7 @@ public class Main extends ListenerAdapter {
 
         // Register Classes that implement SlashCommand
         commandRegistry.register(new AnalyzerCommands());
-        commandRegistry.register(new QuotesV2());
+        commandRegistry.register(new QuotesCommands());
 
         // Log that command executors have been registered
         logger.info("Registered Command Executors");

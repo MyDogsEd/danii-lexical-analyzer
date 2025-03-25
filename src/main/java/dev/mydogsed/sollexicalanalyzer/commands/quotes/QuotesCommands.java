@@ -22,9 +22,9 @@ import java.time.Instant;
 import java.util.*;
 import java.util.List;
 
-public class QuotesV2 implements SlashCommand {
+public class QuotesCommands implements SlashCommand {
 
-    private static final Logger log = LoggerFactory.getLogger(QuotesV2.class);
+    private static final Logger log = LoggerFactory.getLogger(QuotesCommands.class);
 
     @Override
     public SlashCommandData getData() {
@@ -114,7 +114,7 @@ public class QuotesV2 implements SlashCommand {
         if (new Random().nextInt(100) == 69) {
             hook.editOriginalAttachments(
                     FileUpload.fromData(
-                            Objects.requireNonNull(QuotesV2.class.getResourceAsStream("/qiqi.jpg")),
+                            Objects.requireNonNull(QuotesCommands.class.getResourceAsStream("/qiqi.jpg")),
                             "qiqi.jpg"
                     )
             ).queue();
