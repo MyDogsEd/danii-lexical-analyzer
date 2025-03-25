@@ -4,9 +4,7 @@ import dev.mydogsed.sollexicalanalyzer.commands.AnalyzerCommands;
 import dev.mydogsed.sollexicalanalyzer.commands.MiscCommands;
 import dev.mydogsed.sollexicalanalyzer.commands.framework.*;
 import dev.mydogsed.sollexicalanalyzer.commands.quotes.QuotesCommands;
-import dev.mydogsed.sollexicalanalyzer.commands.quotes.QuotesDB;
-import dev.mydogsed.sollexicalanalyzer.commands.quotes.persist.Quote;
-import dev.mydogsed.sollexicalanalyzer.commands.quotes.persist.QuoteAuthor;
+import dev.mydogsed.sollexicalanalyzer.commands.quotes.QuotesV2;
 import dev.mydogsed.sollexicalanalyzer.commands.quotes.persist.SessionFactoryManager;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -19,8 +17,6 @@ import net.dv8tion.jda.api.exceptions.InvalidTokenException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -174,7 +170,7 @@ public class Main extends ListenerAdapter {
         // Register Classes that implement SlashCommand
         commandRegistry.register(new AnalyzerCommands());
         commandRegistry.register(new QuotesCommands());
-        commandRegistry.register(new QuotesDB());
+        commandRegistry.register(new QuotesV2());
 
         // Log that command executors have been registered
         logger.info("Registered Command Executors");

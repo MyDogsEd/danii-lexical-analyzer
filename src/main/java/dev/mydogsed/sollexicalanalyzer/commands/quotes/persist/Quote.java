@@ -45,31 +45,8 @@ public class Quote {
         this.timeCreated = message.getTimeCreated();
         this.jumpURL = message.getJumpUrl();
 
-        if (Util.isTextQuote(message)) {
-            this.content = message.getContentRaw();
-            this.isTextQuote = true;
-        }
+        this.updateContent(message);
 
-        else if (Util.isForwardedTextQuote(message)) {
-            this.content = message.getMessageSnapshots().get(0).getContentRaw();
-            this.isTextQuote = true;
-        }
-
-        else if (Util.isImageQuote(message)) {
-            this.imageURL = message.getAttachments().get(0).getUrl();
-            this.isTextQuote = false;
-        }
-
-        else if (Util.isForwardedImageQuote(message)) {
-            this.imageURL = message.getMessageSnapshots().get(0).getAttachments().get(0).getUrl();
-            this.isTextQuote = false;
-        }
-
-        else {
-            LoggerFactory.getLogger(getClass()).error("Message is not a quote: {}", message.getContentRaw());
-            this.isTextQuote = false;
-            throw new RuntimeException("Unknown message type: " + message);
-        }
     }
 
     public boolean isTextQuote() {
@@ -103,6 +80,34 @@ public class Quote {
 
     public void setAuthor(QuoteAuthor author) {
         this.author = author;
+    }
+
+    public void updateContent(Message message) {
+        if (Util.isTextQuote(message)) {
+            this.content = message.getContentRaw();
+            this.isTextQuote = true;
+        }
+
+        else if (Util.isForwardedTextQuote(message)) {
+            this.content = message.getMessageSnapshots().get(0).getContentRaw();
+            this.isTextQuote = true;
+        }
+
+        else if (Util.isImageQuote(message)) {
+            this.imageURL = message.getAttachments().get(0).getUrl();
+            this.isTextQuote = false;
+        }
+
+        else if (Util.isForwardedImageQuote(message)) {
+            this.imageURL = message.getMessageSnapshots().get(0).getAttachments().get(0).getUrl();
+            this.isTextQuote = false;
+        }
+
+        else {
+            LoggerFactory.getLogger(getClass()).error("Message is not a quote: {}", message.getContentRaw());
+            this.isTextQuote = false;
+            throw new RuntimeException("Unknown message type: " + message);
+        }
     }
 
 }

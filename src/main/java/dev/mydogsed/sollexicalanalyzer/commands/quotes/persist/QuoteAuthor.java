@@ -23,9 +23,8 @@ public class QuoteAuthor {
     public QuoteAuthor() {}
 
     public QuoteAuthor(User user) {
-        this.userName = user.getName();
-        this.avatarURL = user.getAvatarUrl();
         this.id = user.getIdLong();
+        this.updateAuthor(user);
     }
 
     public Long getId() {
@@ -54,4 +53,26 @@ public class QuoteAuthor {
         quote.setAuthor(null);
     }
 
+    public void updateAuthor(User user) {
+        this.userName = user.getName();
+        this.avatarURL = user.getAvatarUrl();
+    }
+
+    public boolean containsQuote(Long id){
+        for(Quote quote : quotes){
+            if (quote.getMessageID().equals(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Quote getQuote(Long id) {
+        for(Quote quote : quotes){
+            if (quote.getMessageID().equals(id)) {
+                return quote;
+            }
+        }
+        return null;
+    }
 }

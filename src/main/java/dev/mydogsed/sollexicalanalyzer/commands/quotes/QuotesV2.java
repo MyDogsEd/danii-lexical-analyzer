@@ -19,9 +19,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
-public class QuotesDB implements SlashCommand {
+public class QuotesV2 implements SlashCommand {
 
-    private static final Logger log = LoggerFactory.getLogger(QuotesDB.class);
+    private static final Logger log = LoggerFactory.getLogger(QuotesV2.class);
 
     @Override
     public SlashCommandData getData() {
