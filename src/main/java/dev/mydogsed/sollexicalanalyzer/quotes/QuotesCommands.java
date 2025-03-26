@@ -12,27 +12,33 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static dev.mydogsed.sollexicalanalyzer.Main.jda;
+
 public class QuotesCommands implements SlashCommand {
 
     private static final Logger log = LoggerFactory.getLogger(QuotesCommands.class);
-    private static final Emoji up = event.getJDA().getEmojiById(1233196810793783356L);
-    Emoji down = event.getJDA().getEmojiById(1313221080659394660L);
+    private static final Emoji up = jda.getEmojiById(1233196810793783356L);
+    private static final Emoji down = jda.getEmojiById(1313221080659394660L);
 
     @Override
     public SlashCommandData getData() {
@@ -129,69 +135,69 @@ public class QuotesCommands implements SlashCommand {
             return;
         }
 
+        EmbedBuilder eb = randomQuoteEmbed(randomQuote);
+        hook.editOriginalEmbeds(eb.build()).setActionRow(
+                Button.of(ButtonStyle.PRIMARY, "upvote", up),
+                Button.of(ButtonStyle.DANGER, "downvote", down)
+        ).queue(m -> handleButtonInteraction(m, event, randomQuote));
 
-
-        if(up == null || down == null) {
-            log.info("Emojis not found.");
-            EmbedBuilder eb = randomQuoteEmbed(randomQuote);
-            hook.editOriginalEmbeds(eb.build()).setActionRow(
-                    Button.primary("upvote_" + randomQuote.getMessageID(), up),
-                    Button.primary("downvote_" + randomQuote.getMessageID(), down)
-            ).queue(m -> handleButtonInteraction(m, event));
-        }
-
-        else {
-            EmbedBuilder eb = randomQuoteEmbed(randomQuote);
-            hook.editOriginalEmbeds(eb.build()).setActionRow(
-                    Button.primary("upvote_" + randomQuote.getMessageID(), "Upvote"),
-                    Button.primary("downvote_" + randomQuote.getMessageID(), "Downvote")
-            ).queue(m -> handleButtonInteraction(m, event));
-        }
     }
 
-    private void handleButtonInteraction(Message message, SlashCommandInteractionEvent event) {
+private void handleButtonInteraction(Message message, SlashCommandInteractionEvent event, Quote quote) {
         long userId = event.getUser().getIdLong();
         long messageId = message.getIdLong();
 
-        event.getJDA().listenOnce(ButtonInteractionEvent.class)
-                // Make sure it's the same user
-                .filter(e -> e.getUser().getIdLong() == userId)
-                // Make sure it's the same message
-                .filter(e -> e.getMessage().getIdLong() == messageId)
+        ListenerAdapter buttonListener = new ListenerAdapter() {
 
-                // Do the event shtuffs
-                .subscribe((ButtonInteractionEvent e) -> {
-                    InteractionHook hook = e.getHook();
-                    e.getInteraction().deferReply().queue();
+            final Set<User> interactedUsers = new HashSet<>();
 
-                    String componentID = e.getComponentId();
+            @Override
+            public void onButtonInteraction(ButtonInteractionEvent event) {
+                super.onButtonInteraction(event);
 
-                    Long quoteId;
-                    if (componentID.startsWith("upvote_")) {
-                        quoteId = Long.parseLong(componentID.substring("upvote_".length()));
-                        Quote quote = QuotesDB.getQuote(quoteId);
-                        if (quote == null) {return;}
-                        quote.voteUp();
-                        QuotesDB.persistQuote(quote);
-                    }
-                    else {
-                        quoteId = Long.parseLong(componentID.substring("downvote_".length()));
-                        Quote quote = QuotesDB.getQuote(quoteId);
-                        if (quote == null) {return;}
+                if (event.getUser().isBot()) {return;}
+                if (event.getMessage().getIdLong() != messageId) {return;}
+                if (interactedUsers.contains(event.getUser())) {
+                    event.getInteraction().reply("You can only react to a rolled quote once!").setEphemeral(true).queue();
+                    return;
+                }
 
-                        quote.voteDown();
-                        QuotesDB.persistQuote(quote);
-                    }
-                    hook.editOriginalEmbeds(randomQuoteEmbed(QuotesDB.getQuote(quoteId)).build()).queue();
-                })
-                .setTimeout(30, TimeUnit.SECONDS, () -> event.getHook().editOriginalComponents(
-                        .setActionRow(Button.primary())
-                ))
+                interactedUsers.add(event.getUser());
 
+                // Acknowledge the event
+                InteractionHook hook = event.getHook();
+                event.getInteraction().deferEdit().queue();
 
+                // Get the component ID of the clicked button
+                String componentID = event.getComponentId();
 
+                if (componentID.equals("upvote")) {
+                    quote.voteUp();
+                    QuotesDB.persistOrMergeQuote(quote);
+                }
+                else {
+                    quote.voteDown();
+                    QuotesDB.persistOrMergeQuote(quote);
+                }
 
+                // Edit the embed to update the score of the quote
+                hook.editOriginalEmbeds(randomQuoteEmbed(quote).build()).queue();
+            }
+        };
 
+        event.getJDA().addEventListener(buttonListener);
+
+        new Timer().schedule(new TimerTask() {
+            public void run() {
+
+                // Disable the actionRows
+                var ar = message.getActionRows().get(0);
+                event.getHook().editOriginalComponents(ar.asDisabled());
+
+                // Unregister the event listener
+                event.getJDA().removeEventListener(buttonListener);
+            }
+        }, 600_000); // 600,000 ms is 10 minutes
     }
 
     private void migrateCommand(SlashCommandInteractionEvent event) {
@@ -212,23 +218,17 @@ public class QuotesCommands implements SlashCommand {
         thread.start();
     }
 
-    private static Button upvoteButton(Long quoteId, boolean disabled) {
-        Emoji upvoteEmoji
-
-        return Button.primary("upvote_" + quoteId, )
-    }
-
     public static EmbedBuilder randomQuoteEmbed(Quote quote) {
         EmbedBuilder eb = new EmbedBuilder()
                 .setTitle("Random Quote")
-                .setAuthor("sol-lexical-analyzer", "https://mydogsed.dev", Main.jda.getSelfUser().getAvatarUrl())
+                .setAuthor("sol-lexical-analyzer", "https://mydogsed.dev", jda.getSelfUser().getAvatarUrl())
                 .setColor(new Color(88, 133, 162))
                 .setFooter(quote.getAuthor().getUserName(), quote.getAuthor().getAvatarURL())
                 .setTimestamp(quote.getTimeCreated());
 
         // is this a text quote?
         if (quote.isTextQuote()) {
-            eb.addField(quote.getContent(), quote.getJumpURL(), false);
+            eb.addField(quote.getContent(), quote.getJumpURL() + "\nScore: " + quote.getScore(), false);
         }
 
         else {
@@ -242,7 +242,7 @@ public class QuotesCommands implements SlashCommand {
     public static EmbedBuilder quotesEmbed(String title) {
         return new EmbedBuilder()
                 .setTitle(title)
-                .setAuthor("sol-lexical-analyzer", "https://mydogsed.dev", Main.jda.getSelfUser().getAvatarUrl())
+                .setAuthor("sol-lexical-analyzer", "https://mydogsed.dev", jda.getSelfUser().getAvatarUrl())
                 .setColor(new Color(88, 133, 162))
                 .setTimestamp(Instant.now());
     }

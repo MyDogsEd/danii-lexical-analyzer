@@ -133,10 +133,14 @@ public class QuotesDB extends ListenerAdapter {
         }
     }
 
-    public static void persistQuote(Quote quote){
+    public static void persistOrMergeQuote(Quote quote){
         try (Session session = SessionFactoryManager.getSessionFactory().openSession()){
             Transaction tx = session.beginTransaction();
-            session.persist(quote);
+            if (session.get(Quote.class, quote.getMessageID()) != null){
+                session.merge(quote);
+            } else {
+                session.persist(quote);
+            }
             tx.commit();
         }
         catch (Exception e){
