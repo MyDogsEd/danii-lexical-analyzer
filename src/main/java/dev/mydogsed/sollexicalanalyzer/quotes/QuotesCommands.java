@@ -6,13 +6,18 @@ import dev.mydogsed.sollexicalanalyzer.quotes.persist.models.Quote;
 import dev.mydogsed.sollexicalanalyzer.quotes.persist.models.QuoteAuthor;
 import dev.mydogsed.sollexicalanalyzer.quotes.persist.QuotesDB;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,10 +26,13 @@ import java.awt.*;
 import java.time.Instant;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class QuotesCommands implements SlashCommand {
 
     private static final Logger log = LoggerFactory.getLogger(QuotesCommands.class);
+    private static final Emoji up = event.getJDA().getEmojiById(1233196810793783356L);
+    Emoji down = event.getJDA().getEmojiById(1313221080659394660L);
 
     @Override
     public SlashCommandData getData() {
@@ -118,12 +126,72 @@ public class QuotesCommands implements SlashCommand {
                             "qiqi.jpg"
                     )
             ).queue();
+            return;
+        }
+
+
+
+        if(up == null || down == null) {
+            log.info("Emojis not found.");
+            EmbedBuilder eb = randomQuoteEmbed(randomQuote);
+            hook.editOriginalEmbeds(eb.build()).setActionRow(
+                    Button.primary("upvote_" + randomQuote.getMessageID(), up),
+                    Button.primary("downvote_" + randomQuote.getMessageID(), down)
+            ).queue(m -> handleButtonInteraction(m, event));
         }
 
         else {
             EmbedBuilder eb = randomQuoteEmbed(randomQuote);
-            hook.editOriginalEmbeds(eb.build()).queue();
+            hook.editOriginalEmbeds(eb.build()).setActionRow(
+                    Button.primary("upvote_" + randomQuote.getMessageID(), "Upvote"),
+                    Button.primary("downvote_" + randomQuote.getMessageID(), "Downvote")
+            ).queue(m -> handleButtonInteraction(m, event));
         }
+    }
+
+    private void handleButtonInteraction(Message message, SlashCommandInteractionEvent event) {
+        long userId = event.getUser().getIdLong();
+        long messageId = message.getIdLong();
+
+        event.getJDA().listenOnce(ButtonInteractionEvent.class)
+                // Make sure it's the same user
+                .filter(e -> e.getUser().getIdLong() == userId)
+                // Make sure it's the same message
+                .filter(e -> e.getMessage().getIdLong() == messageId)
+
+                // Do the event shtuffs
+                .subscribe((ButtonInteractionEvent e) -> {
+                    InteractionHook hook = e.getHook();
+                    e.getInteraction().deferReply().queue();
+
+                    String componentID = e.getComponentId();
+
+                    Long quoteId;
+                    if (componentID.startsWith("upvote_")) {
+                        quoteId = Long.parseLong(componentID.substring("upvote_".length()));
+                        Quote quote = QuotesDB.getQuote(quoteId);
+                        if (quote == null) {return;}
+                        quote.voteUp();
+                        QuotesDB.persistQuote(quote);
+                    }
+                    else {
+                        quoteId = Long.parseLong(componentID.substring("downvote_".length()));
+                        Quote quote = QuotesDB.getQuote(quoteId);
+                        if (quote == null) {return;}
+
+                        quote.voteDown();
+                        QuotesDB.persistQuote(quote);
+                    }
+                    hook.editOriginalEmbeds(randomQuoteEmbed(QuotesDB.getQuote(quoteId)).build()).queue();
+                })
+                .setTimeout(30, TimeUnit.SECONDS, () -> event.getHook().editOriginalComponents(
+                        .setActionRow(Button.primary())
+                ))
+
+
+
+
+
     }
 
     private void migrateCommand(SlashCommandInteractionEvent event) {
@@ -142,6 +210,12 @@ public class QuotesCommands implements SlashCommand {
             hook.editOriginal("Database updated").queue();
         }, "Quotes-Database-Sync-Thread");
         thread.start();
+    }
+
+    private static Button upvoteButton(Long quoteId, boolean disabled) {
+        Emoji upvoteEmoji
+
+        return Button.primary("upvote_" + quoteId, )
     }
 
     public static EmbedBuilder randomQuoteEmbed(Quote quote) {

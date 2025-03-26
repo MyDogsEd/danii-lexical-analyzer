@@ -20,6 +20,7 @@ import net.dv8tion.jda.api.exceptions.InvalidTokenException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +51,7 @@ public class Main extends ListenerAdapter {
             jda = JDABuilder.createDefault(getApiKey())
                     .addEventListeners(new Main())
                     .enableIntents(EnumSet.allOf(GatewayIntent.class))
+                    .enableCache(CacheFlag.EMOJI)
                     .setActivity(Activity.customStatus("starting..."))
                     .setStatus(OnlineStatus.DO_NOT_DISTURB)
                     .build();

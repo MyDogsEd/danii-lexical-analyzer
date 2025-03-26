@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import net.dv8tion.jda.api.entities.User;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class QuoteAuthor {
@@ -17,7 +19,6 @@ public class QuoteAuthor {
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Quote> quotes = new ArrayList<>();
-
 
     // for hibernate, we have to have a default constructor
     public QuoteAuthor() {}

@@ -23,11 +23,6 @@ public class Quote {
     // If the quote is an image
     private String imageURL;
 
-    // QuoteAuthor
-    @ManyToOne
-    @JoinColumn(name = "author_id")
-    private QuoteAuthor author;
-
     // The time that the quote was submitted
     private OffsetDateTime timeCreated;
 
@@ -37,16 +32,23 @@ public class Quote {
     // Whether this is a text or image quote
     private boolean isTextQuote;
 
+    // The score of this quote. Upvotes/downvotes
+    private Integer score;
+
+    // QuoteAuthor
+    @ManyToOne
+    @JoinColumn(name = "author_id")
+    private QuoteAuthor author;
+
     public Quote() {}
 
     public Quote(Message message) {
-
         this.id = message.getIdLong();
         this.timeCreated = message.getTimeCreated();
         this.jumpURL = message.getJumpUrl();
+        this.score = 0;
 
         this.updateContent(message);
-
     }
 
     public boolean isTextQuote() {
@@ -56,7 +58,6 @@ public class Quote {
     public String getContent() {
         return content;
     }
-
 
     public String getImageURL() {
         return imageURL;
@@ -72,6 +73,16 @@ public class Quote {
 
     public String getJumpURL() {
         return jumpURL;
+    }
+
+    public Integer getScore() {return score;}
+
+    public void voteUp() {
+        score++;
+    }
+
+    public void voteDown() {
+        score--;
     }
 
     public QuoteAuthor getAuthor() {

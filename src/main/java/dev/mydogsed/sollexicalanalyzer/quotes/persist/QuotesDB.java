@@ -49,6 +49,7 @@ public class QuotesDB extends ListenerAdapter {
         }
     }
 
+    // Add or update a quote from a message
     public static void addOrUpdateQuote(Message message){
         if (!Util.isQuote(message)) {return;}
 
@@ -97,6 +98,7 @@ public class QuotesDB extends ListenerAdapter {
 
     }
 
+    // Check if a quote exists
     public static boolean quoteExists(Long id){
         try (Session session = SessionFactoryManager.getSessionFactory().openSession()){
             Quote quote = session.get(Quote.class, id);
@@ -108,6 +110,7 @@ public class QuotesDB extends ListenerAdapter {
         }
     }
 
+    // Get a quote by Id
     public static Quote getQuote(Long id){
         try (Session session = SessionFactoryManager.getSessionFactory().openSession()){
             return session.get(Quote.class, id);
@@ -121,16 +124,23 @@ public class QuotesDB extends ListenerAdapter {
         try (Session session = SessionFactoryManager.getSessionFactory().openSession()){
             Transaction tx = session.beginTransaction();
             Quote quote = session.get(Quote.class, id);
-            if (quote == null) return;
-
-            var author = quote.getAuthor();
-
-            author.removeQuote(quote);
-            session.persist(author);
-            session.remove(quote);
-            tx.commit();
+            if (quote != null){
+                session.remove(quote);
+                tx.commit();
+            }
         } catch (Exception e){
             log.error("Error while removing quote.", e);
+        }
+    }
+
+    public static void persistQuote(Quote quote){
+        try (Session session = SessionFactoryManager.getSessionFactory().openSession()){
+            Transaction tx = session.beginTransaction();
+            session.persist(quote);
+            tx.commit();
+        }
+        catch (Exception e){
+            log.error("Error while persisting quote.", e);
         }
     }
 
