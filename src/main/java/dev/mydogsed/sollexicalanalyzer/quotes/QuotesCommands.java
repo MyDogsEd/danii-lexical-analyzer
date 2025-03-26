@@ -33,6 +33,7 @@ import java.time.Instant;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static dev.mydogsed.sollexicalanalyzer.Main.jda;
 
@@ -51,8 +52,14 @@ public class QuotesCommands implements SlashCommand {
                         new SubcommandData("random", "Show a random quote")
                                 .addOption(
                                         OptionType.USER,
-                                        "user",
+                                        "from",
                                         "show quotes from a specific user",
+                                        false
+                                )
+                                .addOption(
+                                        OptionType.USER,
+                                        "excluding",
+                                        "show quotes excluding a specific user",
                                         false
                                 )
                 );
@@ -114,13 +121,26 @@ public class QuotesCommands implements SlashCommand {
 
         List<Quote> quotes;
 
-        if (event.getOption("user") != null) {
-            User user = event.getOption("user").getAsUser();
+        // Fetch quotes from a specific user
+        if (event.getOption("from") != null) {
+            User user = event.getOption("from").getAsUser();
             quotes = QuotesDB.getQuoteAuthor(user.getIdLong()).getQuotes();
         }
 
+        // Fetch all quotes
         else {
             quotes = QuotesDB.getQuotes();
+        }
+
+        if (event.getOption("excluding") != null) {
+            User user = event.getOption("excluding").getAsUser();
+            quotes = quotes.stream().filter(q -> !  q.getAuthor().getId().equals(user.getIdLong())).collect(Collectors.toList());
+        }
+
+        // If no quotes were returned, alert and return
+        if (quotes.isEmpty()) {
+            hook.editOriginal("No quotes found for this criteria.").queue();
+            return;
         }
 
         Quote randomQuote = quotes.get(new Random().nextInt(quotes.size()));
