@@ -6,6 +6,7 @@ import dev.mydogsed.sollexicalanalyzer.framework.CommandRegistry;
 import dev.mydogsed.sollexicalanalyzer.framework.MessageCache;
 import dev.mydogsed.sollexicalanalyzer.framework.RegistrySlashCommandListener;
 import dev.mydogsed.sollexicalanalyzer.framework.SimpleSlashCommand;
+import dev.mydogsed.sollexicalanalyzer.quotes.AdminCommands;
 import dev.mydogsed.sollexicalanalyzer.quotes.QuotesCommands;
 import dev.mydogsed.sollexicalanalyzer.quotes.persist.QuotesDBListener;
 import dev.mydogsed.sollexicalanalyzer.quotes.persist.SessionFactoryManager;
@@ -174,12 +175,13 @@ public class Main extends ListenerAdapter {
         // Register Classes that implement SlashCommand
         commandRegistry.register(new AnalyzerCommands());
         commandRegistry.register(new QuotesCommands());
+        commandRegistry.register(new AdminCommands());
 
         // Log that command executors have been registered
         logger.info("Registered Command Executors");
     }
 
-    // Register listeners -- registered executors will do nothing if this listener isn't registered
+    // Register shutdownRunnables -- registered executors will do nothing if this listener isn't registered
     public static void registerListeners(){
         // Event listener for the command registry
         jda.addEventListener(new RegistrySlashCommandListener());

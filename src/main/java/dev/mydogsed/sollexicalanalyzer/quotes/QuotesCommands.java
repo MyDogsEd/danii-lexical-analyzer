@@ -12,12 +12,14 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.events.session.ShutdownEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
@@ -42,7 +44,7 @@ public class QuotesCommands implements SlashCommand {
 
     @Override
     public SlashCommandData getData() {
-        return Commands.slash("quotes", "admin database commands")
+        return Commands.slash("quotes", "quotes commands")
                 .addSubcommands(
                         new SubcommandData("count", "Shows the number of quotes archived"),
                         new SubcommandData("leaderboard", "Rank members by how many quotes archived."),
@@ -52,8 +54,7 @@ public class QuotesCommands implements SlashCommand {
                                         "user",
                                         "show quotes from a specific user",
                                         false
-                                ),
-                        new SubcommandData("sync", "Sync the database to the quotes channel")
+                                )
                 );
     }
 
@@ -62,7 +63,6 @@ public class QuotesCommands implements SlashCommand {
         switch (Objects.requireNonNull(event.getSubcommandName())) {
             case "count" -> countCommand(event);
             case "leaderboard" -> leaderboardCommand(event);
-            case "sync" -> migrateCommand(event);
             case "random" -> randomCommand(event);
         }
     }
@@ -185,37 +185,32 @@ private void handleButtonInteraction(Message message, SlashCommandInteractionEve
             }
         };
 
+        Runnable shutdownRunnable = new Runnable() {
+            @Override
+            public void run() {
+                // Disable the actionRows
+                var ar = message.getActionRows().get(0);
+                event.getHook().editOriginalComponents(ar.asDisabled()).queue();
+            }
+        };
+
+        // Add the button listener to JDA
         event.getJDA().addEventListener(buttonListener);
+
+        // Add the shutdownRunnable to the shutdownrunnables set
+        AdminCommands.shutdownRunnables.add(shutdownRunnable);
 
         new Timer().schedule(new TimerTask() {
             public void run() {
-
                 // Disable the actionRows
                 var ar = message.getActionRows().get(0);
-                event.getHook().editOriginalComponents(ar.asDisabled());
+                event.getHook().editOriginalComponents(ar.asDisabled()).queue();
 
                 // Unregister the event listener
                 event.getJDA().removeEventListener(buttonListener);
+                AdminCommands.shutdownRunnables.remove(shutdownRunnable);
             }
         }, 600_000); // 600,000 ms is 10 minutes
-    }
-
-    private void migrateCommand(SlashCommandInteractionEvent event) {
-        InteractionHook hook = event.getHook();
-        event.deferReply().queue();
-
-        if (event.getUser().getIdLong() != 335802802335121408L){
-            hook.editOriginal("https://c.tenor.com/pFeLhIX6b5cAAAAd/tenor.gif").queue();
-            return;
-        }
-
-        hook.editOriginal("Updating database. This could take up to 3 minutes.").queue();
-
-        Thread thread = new Thread(() -> {
-            QuotesDB.doMessageSync(event.getJDA());
-            hook.editOriginal("Database updated").queue();
-        }, "Quotes-Database-Sync-Thread");
-        thread.start();
     }
 
     public static EmbedBuilder randomQuoteEmbed(Quote quote) {
@@ -233,7 +228,7 @@ private void handleButtonInteraction(Message message, SlashCommandInteractionEve
 
         else {
             eb.setImage(quote.getImageURL());
-            eb.setDescription(quote.getJumpURL());
+            eb.setDescription(quote.getJumpURL() + "\nScore: " + quote.getScore());
         }
 
         return eb;
