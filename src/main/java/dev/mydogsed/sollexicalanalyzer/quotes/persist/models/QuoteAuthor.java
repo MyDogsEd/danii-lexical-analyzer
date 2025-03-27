@@ -76,4 +76,12 @@ public class QuoteAuthor {
         }
         return null;
     }
+
+    public int getTotalScore() {
+        int total = 0;
+        for(Quote quote : quotes){
+            total += quote.getScore();
+        }
+        return total;
+    }
 }

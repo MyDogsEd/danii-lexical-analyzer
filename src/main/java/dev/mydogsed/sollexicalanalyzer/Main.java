@@ -7,7 +7,9 @@ import dev.mydogsed.sollexicalanalyzer.framework.MessageCache;
 import dev.mydogsed.sollexicalanalyzer.framework.RegistrySlashCommandListener;
 import dev.mydogsed.sollexicalanalyzer.framework.SimpleSlashCommand;
 import dev.mydogsed.sollexicalanalyzer.quotes.AdminCommands;
-import dev.mydogsed.sollexicalanalyzer.quotes.QuotesCommands;
+import dev.mydogsed.sollexicalanalyzer.quotes.CountCommand;
+import dev.mydogsed.sollexicalanalyzer.quotes.LeaderboardCommand;
+import dev.mydogsed.sollexicalanalyzer.quotes.RandomCommand;
 import dev.mydogsed.sollexicalanalyzer.quotes.persist.QuotesDBListener;
 import dev.mydogsed.sollexicalanalyzer.quotes.persist.SessionFactoryManager;
 import net.dv8tion.jda.api.JDA;
@@ -174,8 +176,12 @@ public class Main extends ListenerAdapter {
 
         // Register Classes that implement SlashCommand
         commandRegistry.register(new AnalyzerCommands());
-        commandRegistry.register(new QuotesCommands());
         commandRegistry.register(new AdminCommands());
+
+        // Register Quotes Commands
+        commandRegistry.register(new CountCommand());
+        commandRegistry.register(new LeaderboardCommand());
+        commandRegistry.register(new RandomCommand());
 
         // Log that command executors have been registered
         logger.info("Registered Command Executors");

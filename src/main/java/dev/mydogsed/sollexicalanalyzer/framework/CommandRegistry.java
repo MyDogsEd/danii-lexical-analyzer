@@ -1,8 +1,8 @@
 package dev.mydogsed.sollexicalanalyzer.framework;
 
-import dev.mydogsed.sollexicalanalyzer.quotes.QuotesCommands;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.utils.FileUpload;
@@ -93,7 +93,7 @@ public class CommandRegistry {
                 .setContent("Looks like something broke <@335802802335121408> \n `" + errorMessage + "`")
                 .addFiles(
                         FileUpload.fromData(
-                                Objects.requireNonNull(QuotesCommands.class.getResourceAsStream("/broken.png")),
+                                Objects.requireNonNull(CommandRegistry.class.getResourceAsStream("/broken.png")),
                                 "broken.png"
                         )
                 );

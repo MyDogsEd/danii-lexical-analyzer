@@ -4,7 +4,7 @@ import dev.mydogsed.sollexicalanalyzer.Util;
 import dev.mydogsed.sollexicalanalyzer.framework.CommandRegistry;
 import dev.mydogsed.sollexicalanalyzer.framework.SlashCommandDescription;
 import dev.mydogsed.sollexicalanalyzer.framework.SlashCommandName;
-import dev.mydogsed.sollexicalanalyzer.quotes.QuotesCommands;
+import dev.mydogsed.sollexicalanalyzer.quotes.QuotesUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageHistory;
@@ -44,7 +44,7 @@ public class MiscCommands {
         InteractionHook hook = event.getHook();
         event.deferReply().queue();
 
-        EmbedBuilder eb = QuotesCommands.quotesEmbed("Help");
+        EmbedBuilder eb = QuotesUtil.quotesEmbed("Help");
         CommandRegistry registry = CommandRegistry.getInstance();
         Set<String> commandNames = registry.getCommandNames();
         for(String commandName : commandNames) {
