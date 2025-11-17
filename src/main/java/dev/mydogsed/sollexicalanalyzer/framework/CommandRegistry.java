@@ -1,10 +1,13 @@
 package dev.mydogsed.sollexicalanalyzer.framework;
 
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
+import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import net.dv8tion.jda.api.utils.FileUpload;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 
@@ -86,6 +89,19 @@ public class CommandRegistry {
 
     public Set<String> getCommandNames() {
         return map.keySet();
+    }
+
+    // For the given guild, register all commands in the command registry as slash commands for that guild
+    public static void registerCommandsForGuild(Guild guild){
+        CommandRegistry registry = CommandRegistry.getInstance();
+        CommandListUpdateAction updateAction = guild.updateCommands();
+
+        for(String commandName : registry.getCommandNames()){
+            updateAction = updateAction.addCommands(
+                    registry.getExecutor(commandName).getData().setContexts(InteractionContextType.GUILD)
+            );
+        }
+        updateAction.queue();
     }
 
     private void sendErrorMessage(TextChannel channel, String errorMessage) {

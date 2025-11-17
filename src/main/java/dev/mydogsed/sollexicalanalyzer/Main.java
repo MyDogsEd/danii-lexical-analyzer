@@ -21,6 +21,8 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.exceptions.InvalidTokenException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.InteractionContextType;
+import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.requests.restaction.CommandListUpdateAction;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
@@ -136,26 +138,13 @@ public class Main extends ListenerAdapter {
 
         // Register slash commands for the two guilds:
         try {
-            registerCommandsForGuild(Objects.requireNonNull(jda.getGuildById("734502410952769607")));
-            registerCommandsForGuild(Objects.requireNonNull(jda.getGuildById("1233092684198182943")));
-            registerCommandsForGuild(Objects.requireNonNull(jda.getGuildById("612467012018634753")));
+            CommandRegistry.registerCommandsForGuild(Objects.requireNonNull(jda.getGuildById("734502410952769607")));
+            CommandRegistry.registerCommandsForGuild(Objects.requireNonNull(jda.getGuildById("1233092684198182943")));
+            CommandRegistry.registerCommandsForGuild(Objects.requireNonNull(jda.getGuildById("612467012018634753")));
         } catch (NullPointerException e) {
             logger.error("Guilds not found for registering slash commands!");
         }
         logger.info("Registered Slash Commands");
-    }
-
-    // For the given guild, register all commands in the command registry as slash commands for that guild
-    private static void registerCommandsForGuild(Guild guild){
-        CommandRegistry registry = CommandRegistry.getInstance();
-        Set<String> commandNames = registry.getCommandNames();
-        CommandListUpdateAction updateAction = guild.updateCommands();
-        for(String commandName : commandNames){
-            updateAction = updateAction.addCommands(
-                    registry.getExecutor(commandName).getData().setGuildOnly(true)
-            );
-        }
-        updateAction.queue();
     }
 
     // Register the command Executors so the commands actually do something lmao
