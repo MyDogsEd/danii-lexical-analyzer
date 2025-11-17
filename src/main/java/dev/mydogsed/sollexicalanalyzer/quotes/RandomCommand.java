@@ -17,6 +17,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle;
 import net.dv8tion.jda.api.utils.FileUpload;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -96,7 +97,38 @@ public class RandomCommand implements SlashCommand {
     }
 
     private void handleButtonInteraction(Message message, SlashCommandInteractionEvent event, Quote quote) {
-        long userId = event.getUser().getIdLong();
+        ListenerAdapter buttonListener = getListenerAdapter(message, quote);
+
+        Runnable shutdownRunnable = new Runnable() {
+            @Override
+            public void run() {
+                // Disable the actionRows
+                var ar = message.getActionRows().get(0);
+                event.getHook().editOriginalComponents(ar.asDisabled()).queue();
+            }
+        };
+
+        // Add the button listener to JDA
+        event.getJDA().addEventListener(buttonListener);
+
+        // Add the shutdownRunnable to the shutdownrunnables set
+        AdminCommands.shutdownRunnables.add(shutdownRunnable);
+
+        new Timer().schedule(new TimerTask() {
+            public void run() {
+                // Disable the actionRows
+                var ar = message.getActionRows().get(0);
+                event.getHook().editOriginalComponents(ar.asDisabled()).queue();
+
+                // Unregister the event listener
+                event.getJDA().removeEventListener(buttonListener);
+                AdminCommands.shutdownRunnables.remove(shutdownRunnable);
+            }
+        }, 600_000); // 600,000 ms is 10 minutes
+    }
+
+    @NotNull
+    private static ListenerAdapter getListenerAdapter(Message message, Quote quote) {
         long messageId = message.getIdLong();
 
         ListenerAdapter buttonListener = new ListenerAdapter() {
@@ -136,32 +168,6 @@ public class RandomCommand implements SlashCommand {
                 hook.editOriginalEmbeds(randomQuoteEmbed(quote).build()).queue();
             }
         };
-
-        Runnable shutdownRunnable = new Runnable() {
-            @Override
-            public void run() {
-                // Disable the actionRows
-                var ar = message.getActionRows().get(0);
-                event.getHook().editOriginalComponents(ar.asDisabled()).queue();
-            }
-        };
-
-        // Add the button listener to JDA
-        event.getJDA().addEventListener(buttonListener);
-
-        // Add the shutdownRunnable to the shutdownrunnables set
-        AdminCommands.shutdownRunnables.add(shutdownRunnable);
-
-        new Timer().schedule(new TimerTask() {
-            public void run() {
-                // Disable the actionRows
-                var ar = message.getActionRows().get(0);
-                event.getHook().editOriginalComponents(ar.asDisabled()).queue();
-
-                // Unregister the event listener
-                event.getJDA().removeEventListener(buttonListener);
-                AdminCommands.shutdownRunnables.remove(shutdownRunnable);
-            }
-        }, 600_000); // 600,000 ms is 10 minutes
+        return buttonListener;
     }
 }
