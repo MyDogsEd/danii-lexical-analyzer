@@ -36,7 +36,7 @@ import static dev.mydogsed.sollexicalanalyzer.Util.getApiKey;
 
 public class Main extends ListenerAdapter {
 
-    public static JDA jda;
+    private static JDA jda;
 
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
