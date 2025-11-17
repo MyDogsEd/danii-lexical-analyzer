@@ -3,6 +3,7 @@ package dev.mydogsed.sollexicalanalyzer.framework;
 import dev.mydogsed.sollexicalanalyzer.Main;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.Command;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
@@ -20,9 +21,10 @@ public class RegistrySlashCommandListener extends ListenerAdapter {
 
         // get the name of the command
         String command = event.getName();
+        CommandRegistry registry = CommandRegistry.getInstance();
 
         // if the executor for the command is not found, log and error to user
-        if (!Main.commandRegistry.containsExecutor(command)){
+        if (!registry.containsExecutor(command)){
             LoggerFactory.getLogger(RegistrySlashCommandListener.class)
                     .warn("Command executor for '{}' is not registered!", command);
             event
@@ -32,6 +34,6 @@ public class RegistrySlashCommandListener extends ListenerAdapter {
                     .queue();
         }
         // Execute the command.
-        Main.commandRegistry.getExecutor(command).onCommand(event);
+        registry.getExecutor(command).onCommand(event);
     }
 }

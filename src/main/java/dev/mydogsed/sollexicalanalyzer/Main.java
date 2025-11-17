@@ -40,11 +40,9 @@ public class Main extends ListenerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
-    public static CommandRegistry commandRegistry = CommandRegistry.getInstance();
+    private static final CommandRegistry commandRegistry = CommandRegistry.getInstance();
 
     public static MessageCache smashesCache;
-
-    public static MessageCache quotesCache;
 
     private static final long startTime = System.currentTimeMillis();
 
